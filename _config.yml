@@ -23,7 +23,7 @@ repository               : "liuyirigel/liuyirigel.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "LiuyiRigel.github.io/images/conquest_of_revachol_flat_contrast.jpg"
+  avatar           : "conquest_of_revachol_flat_contrast.jpg"
   name             : " LiuYi Yu"
   pronouns         : ""  
   bio              : "学士，研究兴趣: Self-Supvised Learing、AE、Frequency Analysis"
