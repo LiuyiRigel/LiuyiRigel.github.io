@@ -7,8 +7,6 @@ excerpt: 'This paper is about the number 1. The number 2 is left for future work
 date: 2025-05-09
 venue: '2025 IEEE 7th International Conference on Communications, Information System and Computer Engineering'
 slidesurl: '10.1109/CISCE65916.2025.11065738'
-paperurl: 'https://academicpages.github.io/files/paper1.pdf'
-bibtexurl: 'https://academicpages.github.io/files/bibtex1.bib'
 citation: '“Face Detection Study Based on YOLOv11n Improved ViT with AKConv,”in Proc. 2025 IEEE 7th International Conference on Communications, Information System and Computer Engineering (CISCE 2025), Gangzhou, China. 2025/05/09-05/11, Article DOI:10.1109/CISCE65916.2025.11065738'
 ---
 
