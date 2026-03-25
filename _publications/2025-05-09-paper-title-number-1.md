@@ -9,7 +9,7 @@ venue: '2025 IEEE 7th International Conference on Communications, Information Sy
 slidesurl: '10.1109/CISCE65916.2025.11065738'
 paperurl: 'https://academicpages.github.io/files/paper1.pdf'
 bibtexurl: 'https://academicpages.github.io/files/bibtex1.bib'
-citation: 'Your Name, You. (2009). &quot;Paper Title Number 1.&quot; <i>Journal 1</i>. 1(1).'
+citation: '“Face Detection Study Based on YOLOv11n Improved ViT with AKConv,”in Proc. 2025 IEEE 7th International Conference on Communications, Information System and Computer Engineering (CISCE 2025), Gangzhou, China. 2025/05/09-05/11, Article DOI:10.1109/CISCE65916.2025.11065738'
 ---
 
 ## Abstract
