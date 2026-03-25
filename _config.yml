@@ -45,7 +45,7 @@ author:
   researchgate     : # URL
   scopus           : # URL
   zotero           : # URL
-  bilibili         : "https://space.bilibili.com/284858925?spm_id_from=333.1007.0.0"
+
 
 
   # Repositories and software development
@@ -80,6 +80,7 @@ author:
   weibo            : # Username
   wikipedia        : # Username
   xing             : # Username
+  bilibili         : "https://space.bilibili.com/284858925?spm_id_from=333.1007.0.0"
   youtube          : "https://www.youtube.com/@garyalen8192" # Username
   zhihu            : # Username
 
