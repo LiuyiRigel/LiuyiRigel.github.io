@@ -16,7 +16,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7' # Academic Pages 建议使用较稳健的 2.7 或 3.0
+          ruby-version: '3.2' # Academic Pages 建议使用较稳健的 2.7 或 3.0
           bundler-cache: true
 
       - name: Build and Deploy
