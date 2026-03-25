@@ -5,31 +5,48 @@ on:
     branches:
       - master
       - main
-    paths-ignore:
-      - 'README.md'
-      - '.gitignore'
+  workflow_dispatch: # 允许手动触发
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # 确保获取完整历史记录，有利于某些 Jekyll 插件计算时间
+        uses: actions/checkout@v4
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # 核心修复：升级 Ruby 以满足 nokogiri 1.16+ 的要求
-          bundler-cache: true # 自动运行 bundle install 并缓存依赖，加快后续构建速度
+          ruby-version: '3.2' # 强制使用 Ruby 3.2 解决 nokogiri 兼容性
+          bundler-cache: true
 
-      - name: Build and Deploy
-        uses: helaili/jekyll-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_branch: 'gh-pages' # 网站静态文件将发布到此分支
-          # 如果你的 Gemfile 中有特殊依赖，该 Action 会自动处理
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
