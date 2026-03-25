@@ -6,7 +6,12 @@ redirect_from:
   - /about/
   - /about.html
 ---
-This is the front page of my website blog.互联网角落的碎碎念
+This is the front page of my website blog. 一点互联网角落的碎碎念
+
+
+* 一点随笔
+* 学术笔记
+* 一点电影/ 书籍的观后感
 
 
 
@@ -19,6 +24,7 @@ This is the front page of my website blog.互联网角落的碎碎念
 
 [查看更多博文]({{ site.baseurl }}/year-archive/)
 
+---
 
 About this page
 ======
