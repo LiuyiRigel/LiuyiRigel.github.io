@@ -24,11 +24,11 @@ repository               : "liuyirigel/liuyirigel.github.io"
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "余刘羿 LiuYi Yu"
-  pronouns         : "he"  
-  bio              : "学士，研究兴趣: Self-Supvised Learing、Computer Vision、AE、Frequency Analysis、Transformer"
+  name             : " LiuYi Yu"
+  pronouns         : ""  
+  bio              : "学士，研究兴趣: Self-Supvised Learing、AE、Frequency Analysis"
   location         : "MaoMing, China"
-  employer         : "Guangdong University of Petrochemical Technology"
+  employer         : "GDUPT"
   uri              : # URL
   email            : "oshhhs1@gmail.com" 
 
