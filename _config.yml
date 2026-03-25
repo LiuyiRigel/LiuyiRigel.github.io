@@ -80,8 +80,8 @@ author:
   weibo            : # Username
   wikipedia        : # Username
   xing             : # Username
-  bilibili         : "https://space.bilibili.com/284858925"
-  youtube          : "https://www.youtube.com/@garyalen8192" # Username
+  bilibili         : "284858925"
+  youtube          : "@garyalen8192" # Username
   zhihu            : # Username
 
 # Publication Category - The following the list of publication categories and their headings
