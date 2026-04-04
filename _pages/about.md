@@ -24,7 +24,7 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
   {% include archive-single.html  %}
 
   {% unless forloop.last %}
-<div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.2), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
+<div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(68, 18, 124, 0.2), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
   {% endunless %}
 
 {% endfor %}
