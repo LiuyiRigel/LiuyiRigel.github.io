@@ -20,7 +20,7 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
 ## 📝 最近博文 / Recent Posts
 
 
-{% for post in site.posts limit:5 %}
+{% for post in site.posts limit:3 %}
   {% include archive-single.html  %}
 
   {% unless forloop.last %}
@@ -32,7 +32,21 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
 
 [查看更多博文]({{ site.baseurl }}/year-archive/)
 
+
 ---
+## 📝 项目 / Recent Projects
+
+* Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)
+<div align="center">
+    <img src="/images/project_images/FFF.png" 
+         style="width: 100%; 
+                border-radius: 10px; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+                border: 1px solid #eee;">
+</div>
+
+<br>
+
 
 About this page
 ======
