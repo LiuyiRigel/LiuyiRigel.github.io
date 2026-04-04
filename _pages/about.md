@@ -34,10 +34,7 @@ redirect_from:
 ---
 ## 📝 项目 / Recent Projects
 
-* Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)
-
-  <a href="../files/paper-file/Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)_Ver_0.02.1.pdf" class="btn btn--info">Download PDF</a>
-
+* Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)  
 <div align="center">
     <img src="../images/project_images/FFF.png" 
          style="width: 100%; 
@@ -47,6 +44,7 @@ redirect_from:
 </div>
 
 <br>
+<a href="../files/paper-file/Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)_Ver_0.02.1.pdf" class="btn btn--info">Download PDF</a>
 
 
 About this page
