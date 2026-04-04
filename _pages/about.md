@@ -5,6 +5,7 @@ author_profile: true
 redirect_from: 
   - /about/
   - /about.html
+entries_layout: list
 ---
 This is the front page of my website blog. 一点互联网角落的碎碎念
 
