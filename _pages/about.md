@@ -1,22 +1,21 @@
 ---
 permalink: /
-title: "Welcome to my island"
+title: "Welcome to my Island"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
 
-This is the front page of my website blog. 一点互联网角落的碎碎念
+ 一点互联网角落的碎碎念/ This is the front page of my website blog.
 
 
-* 一点随笔
-* 学术笔记
-* 一点电影/ 书籍的观后感
+* 一点随笔/ Random Thoughts
+* 学术笔记/ Paper Notes
+* 一点电影/ 书籍的观后感 / Movie and Book Reviews
+* 以及一些项目/ And some projects
 
 
-
----
 ## 📝 最近博文 / Recent Posts
 
 
@@ -24,24 +23,26 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
   {% include archive-single.html  %}
 
   {% unless forloop.last %}
-<div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(60, 10, 100, 0.60), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
+<div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(138, 43, 201, 0.45), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
   {% endunless %}
 
 {% endfor %}
 
-
-[查看更多博文]({{ site.baseurl }}/year-archive/)
+[查看更多博文/ More Posts]({{ site.baseurl }}/year-archive/)
 
 
 ---
 ## 📝 项目 / Recent Projects
 
 * Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)
+
+  <a href="../files/paper-file/Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)_Ver_0.02.1.pdf" class="btn btn--info">Download PDF</a>
+
 <div align="center">
-    <img src="/images/project_images/FFF.png" 
+    <img src="../images/project_images/FFF.png" 
          style="width: 100%; 
-                border-radius: 10px; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+                border-radius: 5px; 
+                box-shadow: 0 10px 15px rgba(0,0,0,0.2); 
                 border: 1px solid #eee;">
 </div>
 
