@@ -19,8 +19,12 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
 ---
 ## 📝 最近博文 / Recent Posts
 
+
 {% for post in site.posts limit:5 %}
   {% include archive-single.html %}
+  {% unless forloop.last %}
+  <hr style="height: 1px; border: none; background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.2), rgba(0,0,0,0)); margin: 15px 0;">
+  {% endunless %}
 {% endfor %}
 
 
