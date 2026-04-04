@@ -1,12 +1,17 @@
 ---
+layout: about
 permalink: /
 title: "Welcome to my island"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
-entries_layout: list
+widgets:
+  - type: posts
+    title: "Recent Posts"
+    entries_layout: list  # 这里的 list 会触发左图右文
 ---
+
 This is the front page of my website blog. 一点互联网角落的碎碎念
 
 
