@@ -20,7 +20,7 @@ This is the front page of my website blog. 一点互联网角落的碎碎念
 ## 📝 最近博文 / Recent Posts
 
 {% for post in site.posts limit:5 %}
-  {% capture page_type %}{% endcapture %} {% include archive-single.html type="list" %} 
+  {% include archive-single.html %}
 {% endfor %}
 
 
