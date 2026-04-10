@@ -37,7 +37,7 @@ redirect_from:
 * Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)  
 <div align="center">
     <img src="../images/project_images/FFF.png" 
-         style="width: 100%; 
+         style="width: 95%; 
                 border-radius: 5px; 
                 box-shadow: 0 10px 15px rgba(0,0,0,0.2); 
                 border: 1px solid #eee;">
@@ -47,7 +47,23 @@ redirect_from:
 
 <a href="../files/paper-file/Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)_Ver_0.02.1.pdf" class="btn btn--info">Download PDF</a>
 
+
+
+* Dummy-Robot: Super compact smart robotic-arm  
+<div align="center">
+    <img src="../images/project_images/Frame000168.png
+" 
+         style="width: 95%; 
+                border-radius: 5px; 
+                box-shadow: 0 10px 15px rgba(0,0,0,0.2); 
+                border: 1px solid #eee;">
+</div>
+
+<a href="https://github.com/LiuyiRigel/Dummy-Robot" class="btn btn--info">View on GitHub</a>
+
+
 <div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(138, 43, 201, 0.45), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
+
 
 
 About this page
