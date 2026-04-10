@@ -44,7 +44,6 @@ redirect_from:
 </div>
 
 <br>
-
 <a href="../files/paper-file/Aerodynamic Effects of Stretched Formations During Long-Distance Running (Marathons)_Ver_0.02.1.pdf" class="btn btn--info">Download PDF</a>
 
 
@@ -59,8 +58,8 @@ redirect_from:
                 border: 1px solid #eee;">
 </div>
 
+<br>
 <a href="https://github.com/LiuyiRigel/Dummy-Robot" class="btn btn--info">View on GitHub</a>
-
 
 <div style="height: 2px; background: linear-gradient(to right, rgba(0,0,0,0), rgba(138, 43, 201, 0.45), rgba(0,0,0,0)); margin: 20px 0; clear: both;"></div>
 
