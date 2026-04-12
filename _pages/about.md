@@ -67,29 +67,28 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 通用超参数 --- */
-    --wall-bg: #f4f6f8;          /* 工业冷灰背景，增强对比 */
-    --empty-cell: #ffffff;       /* 纯白空位 */
+    /* --- 核心超参数 --- */
+    --wall-bg: #f4f6f8;
+    --empty-cell: #ffffff;
+    --text-gray: #888; /* 统一文本颜色 */
     
-    /* --- 绿墙墙超参数 --- */
+    /* 绿墙参数 */
     --cell-w: 12px;
     --cell-h: 9px;
     --gap: 3px;
-    --radius: 2px;
 
-    /* --- 二维坐标系超参数 (New) --- */
-    --scatter-width: 450px;      /* 坐标系宽度 */
-    --scatter-height: 300px;     /* 坐标系高度 */
-    --dot-size: 16px;            /* 样本圆形大小 */
-    --dot-border-w: 3px;         /* 样本边界宽度 */
-    --dot-border-col: #f0f0f0;   /* 灰白色边界颜色 */
+    /* 坐标系参数 */
+    --scatter-w: 480px;      
+    --scatter-h: 320px;     
+    --dot-size: 14px;            
+    --dot-border-w: 2px;         
+    --dot-border-col: #ffffff;   /* 纯白边界更清透 */
   }
 
-  /* --- 整体容器 --- */
   .academic-dashboard-wrapper {
     background: var(--wall-bg);
-    padding: 30px 40px;
-    border-radius: 8px;
+    padding: 35px;
+    border-radius: 12px;
     margin: 40px auto;
     width: fit-content;
     display: flex;
@@ -99,22 +98,21 @@ redirect_from:
     font-family: -apple-system, system-ui, sans-serif;
   }
 
-  /* --- 绿墙部分 (保持经典) --- */
+  /* --- Wall 部分 --- */
   .matrix-main-container {
     display: grid;
-    grid-template-columns: 30px 1fr;
-    grid-template-rows: 20px 1fr;
-    gap: 4px;
-    margin-bottom: 25px; /* 与下方坐标系拉开间距 */
+    grid-template-columns: 35px 1fr;
+    grid-template-rows: 25px 1fr;
+    gap: 5px;
+    margin-bottom: 40px;
   }
 
   .month-axis {
     grid-column: 2;
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
-    color: #888;
-    padding-bottom: 5px;
+    font-size: 10px;
+    color: var(--text-gray);
   }
 
   .day-axis {
@@ -122,9 +120,8 @@ redirect_from:
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 9px;
-    color: #aaa;
-    padding: 2px 0;
+    font-size: 10px;
+    color: var(--text-gray);
     height: calc(7 * var(--cell-h) + 6 * var(--gap));
   }
 
@@ -139,133 +136,82 @@ redirect_from:
   .cell {
     width: var(--cell-w);
     height: var(--cell-h);
-    border-radius: var(--radius);
+    border-radius: 1px;
     background-color: var(--bg-color);
-    transition: transform 0.2s;
-    border: 1px solid rgba(0,0,0,0.03);
-    position: relative;
+    border: 1px solid rgba(0,0,0,0.02);
   }
 
-  .cell:hover {
-    transform: scale(1.3);
-    z-index: 100;
-    filter: saturate(1.2) brightness(1.05);
-  }
-
-  /* 墙的 Tooltip (精简) */
-  .cell:hover::after {
-    content: attr(data-tip);
-    position: absolute;
-    background: rgba(33, 33, 33, 0.9);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 2px;
-    font-size: 9px;
-    bottom: 250%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  /* --- 二维坐标系部分 (New) --- */
+  /* --- Scatter 坐标系部分 --- */
   .scatter-plots-container {
-    width: var(--scatter-width);
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .scatter-title {
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    width: var(--scatter-w);
+    position: relative;
+    padding-bottom: 30px; /* 为横轴文字留位 */
   }
 
   .scatter-frame {
-    width: var(--scatter-width);
-    height: var(--scatter-height);
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    position: relative; /* 核心：样本点绝对定位的基准 */
-    box-sizing: border-box;
-    /* 二维色彩渐变背景：映射 HSL 逻辑 */
-    background: linear-gradient(135deg, 
-      hsl(210, 25%, 25%) 0%,   /* 左下：低M/低A (深蓝) */
-      hsl(260, 35%, 60%) 50%,  /* 中间过渡 */
-      hsl(310, 45%, 85%) 100%  /* 右上：高M/高A (亮紫) */
-    );
+    width: var(--scatter-w);
+    height: var(--scatter-h);
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+    background: linear-gradient(to top right, #334455, #88aabb, #ffffff);
+    overflow: visible; /* 允许圆点悬停放大 */
   }
 
-  /* 坐标轴标签 */
+  /* 坐标轴文本修复 */
   .axis-label {
     position: absolute;
     font-size: 10px;
-    color: #fff; /* 渐变背景上使用白色文字 */
-    font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    color: var(--text-gray);
+    white-space: nowrap;
   }
 
-  .label-y-high { top: 10px; left: -25px; transform: rotate(-90deg); }
-  .label-y-low  { bottom: 10px; left: -25px; transform: rotate(-90deg); }
-  .label-x-high { bottom: -20px; right: 10px; }
-  .label-x-low  { bottom: -20px; left: 10px; }
+  .label-y { 
+    left: -40px; 
+    top: 50%; 
+    transform: translateY(-50%) rotate(-90deg); 
+  }
+  .label-x { 
+    bottom: -25px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+  }
 
-  /* 样本圆形 (Dots) */
+  /* 样本点修复 */
   .data-dot {
     width: var(--dot-size);
     height: var(--dot-size);
     border-radius: 50%;
     border: var(--dot-border-w) solid var(--dot-border-col);
     background-color: var(--dot-color);
-    position: absolute; /* 绝对定位 */
-    transform: translate(-50%, 50%); /* 确保圆心在坐标点上 */
-    transition: all 0.2s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    z-index: 10;
+    position: absolute;
+    transform: translate(-50%, -50%); /* 改为中心对齐 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    z-index: 5;
+    transition: all 0.2s;
   }
 
   .data-dot:hover {
-    transform: translate(-50%, 50%) scale(1.3);
+    transform: translate(-50%, -50%) scale(1.5);
     z-index: 100;
-    border-color: #fff; /* 悬停时边界变亮 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
 
-  /* 坐标系 Tooltip (支持 note 换行) */
   .data-dot:hover::after {
     content: attr(data-tip);
     position: absolute;
-    background: rgba(33, 33, 33, 0.95);
+    background: rgba(40, 44, 52, 0.95);
     color: #fff;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 10px;
-    line-height: 1.5;
-    bottom: 140%; /* 调高 */
+    bottom: 150%;
     left: 50%;
     transform: translateX(-50%);
-    white-space: pre-wrap; /* 允许换行 */
+    white-space: pre-wrap;
     width: max-content;
-    max-width: 250px; /* 限制宽度 */
-    text-align: left;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    pointer-events: none;
-  }
-
-  /* --- 图注 (Caption) --- */
-  .matrix-caption-final {
-    margin-top: 25px;
-    font-size: 11px;
-    color: #777;
-    border-top: 1px solid #ddd;
-    padding-top: 12px;
-    width: 100%;
-    text-align: left;
+    max-width: 200px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
   }
 </style>
 
@@ -275,96 +221,55 @@ redirect_from:
     <div class="month-axis">
       <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
     </div>
-
     <div class="day-axis">
       <span>M</span><span>W</span><span>F</span><span>S</span>
     </div>
-
     <div class="matrix-grid-final">
-      {% assign seconds_per_day = 86400 %}
-      {% assign current_year = "now" | date: "%Y" %}
-      {% assign year_start = current_year | append: "-01-01" %}
-      
+      {% assign year_start = "now" | date: "%Y-01-01" %}
       {% for i in (0..364) %}
-        {% assign offset = i | times: seconds_per_day %}
-        {% assign day_ts = year_start | date: "%s" | plus: offset %}
+        {% assign day_ts = year_start | date: "%s" | plus: 86400 | times: i | plus: 1735689600 %} {% assign day_ts = i | times: 86400 | plus: 1735689600 %}
         {% assign date_str = day_ts | date: "%Y-%m-%d" %}
         {% assign dow = day_ts | date: "%u" %}
-
         {% assign entry = site.data.moods | where: "date", date_str | first %}
 
         {% if entry %}
-          {% comment %} HSL 映射 (清透感) {% endcomment %}
-          {% assign h = entry.a | minus: 1 | times: 25 | plus: 200 %}
-          {% assign l = entry.m | times: 7 | plus: 45 %}
+          {% comment %} 反转映射：M越高越亮(L+), A越高越深(L-) {% endcomment %}
+          {% assign h = entry.a | minus: 1 | times: 20 | plus: 200 %}
+          {% assign l = entry.m | times: 10 | minus: entry.a | times: 5 | plus: 50 %}
           {% assign color = "hsl(" | append: h | append: ", 40%, " | append: l | append: "%)" %}
-          
-          {% comment %} 墙的 Tooltip 内容 (精简日期数值) {% endcomment %}
-          {% assign tip_wall = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
+          {% assign tip = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
         {% else %}
           {% assign color = "var(--empty-cell)" %}
-          {% assign tip_wall = date_str %}
+          {% assign tip = date_str %}
         {% endif %}
-
-        <div class="cell" 
-             style="--bg-color: {{ color }}; grid-row: {{ dow }};" 
-             data-tip="{{ tip_wall }}">
-        </div>
+        <div class="cell" style="--bg-color: {{ color }}; grid-row: {{ dow }};" data-tip="{{ tip }}"></div>
       {% endfor %}
     </div>
   </div>
 
   <div class="scatter-plots-container">
-    <div class="scatter-title">M-A Correlation Space</div>
+    <div class="axis-label label-y">Mood (Psychological)</div>
+    <div class="axis-label label-x">Alcohol Intake (Physiological)</div>
+    
     <div class="scatter-frame">
-      
-      <div class="axis-label label-y-high">High Mood (5.0)</div>
-      <div class="axis-label label-y-low">Low Mood (1.0)</div>
-      <div class="axis-label label-x-high">High Alcohol (5.0)</div>
-      <div class="axis-label label-x-low">Clear (1.0)</div>
-
-      {% comment %} 
-        循环 site.data.moods 生成样本圆形 
-        注意：Jekyll 的 Liquid 无法直接获取 site.data.moods 的长度
-        这里我们依然需要遍历 site.data.moods
-      {% endcomment %}
-      
       {% for entry in site.data.moods %}
-        {% comment %} 
-          计算坐标：假设 m 和 a 范围是 1.0 - 5.0
-          X (Alcohol) % = (a - 1) / 4 * 100
-          Y (Mood) % = (m - 1) / 4 * 100 (反转，因为CSS Y轴向下)
-        {% endcomment %}
-        
-        {% assign x_percent = entry.a | minus: 1 | divided_by: 4.0 | times: 100 %}
-        {% assign y_raw_percent = entry.m | minus: 1 | divided_by: 4.0 | times: 100 %}
-        {% assign y_percent = 100 | minus: y_raw_percent %}
+        {% comment %} 归一化修复：使用 5% 到 95% 避免边缘切断 {% endcomment %}
+        {% assign x_pos = entry.a | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
+        {% assign y_val = entry.m | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
+        {% assign y_pos = 100 | minus: y_val %}
 
-        {% comment %} 计算圆形的 HSL 颜色 (与墙保持一致) {% endcomment %}
-        {% assign h_dot = entry.a | minus: 1 | times: 25 | plus: 200 %}
-        {% assign l_dot = entry.m | times: 7 | plus: 45 %}
-        {% assign color_dot = "hsl(" | append: h_dot | append: ", 40%, " | append: l_dot | append: "%)" %}
+        {% assign h_dot = entry.a | minus: 1 | times: 20 | plus: 200 %}
+        {% assign l_dot = entry.m | times: 10 | minus: entry.a | times: 5 | plus: 50 %}
+        {% assign color_dot = "hsl(" | append: h_dot | append: ", 45%, " | append: l_dot | append: "%)" %}
 
-        {% comment %} 
-          构建坐标系的 Tooltip 内容 (支持 note 换行) 
-          &#10; 是 HTML 实体换行符
-        {% endcomment %}
-        {% capture tip_scatter %}{{ entry.date }} | M{{ entry.m }} A{{ entry.a }}{% if entry.note %} &#10;Note: {{ entry.note }}{% endif %}{% endcapture %}
+        {% capture tip_scat %}{{ entry.date }}&#10;M: {{ entry.m }} A: {{ entry.a }}{% if entry.note %}&#10;Note: {{ entry.note }}{% endif %}{% endcapture %}
 
         <div class="data-dot" 
-             style="--dot-color: {{ color_dot }}; left: {{ x_percent }}%; top: {{ y_percent }}%;" 
-             data-tip="{{ tip_scatter }}">
+             style="--dot-color: {{ color_dot }}; left: {{ x_pos }}%; top: {{ y_pos }}%;" 
+             data-tip="{{ tip_scat }}">
         </div>
       {% endfor %}
     </div>
-  </div>
-
-  <div class="matrix-caption-final">
-    <b>Fig 1.</b> Spatiotemporal and Bivariate Analysis of Daily States ({{ current_year }}). 
-    The <b>Annual Wall</b> tracks chronological state over 52 weeks. 
-    The <b>Correlation Space</b> plots daily data points (dots) with grey-white borders over a linear bivariate gradient. 
-    X-axis encodes Alcohol (Hue); Y-axis encodes Mood (Lightness).
-    Hover over dots to display date, numerical values, and associated descriptive <b>notes</b>.
   </div>
 </div>
 
