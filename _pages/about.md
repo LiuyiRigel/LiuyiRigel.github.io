@@ -57,9 +57,6 @@ redirect_from:
   }
 </style>
 
-
-
-
  一点互联网角落的碎碎念/ This is the front page of my website blog.
 
 
@@ -118,45 +115,66 @@ redirect_from:
 
 [//]: (Mood & Alcohol Matrix Visualization - A personal state monitor that maps mood and alcohol levels to a color-coded grid, providing an intuitive visual representation of daily fluctuations. Each cell's color intensity reflects the combined effect of mood and alcohol consumption, allowing for quick insights into patterns and correlations over time.)
 
-<div class="mood-matrix-container">
-  <div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">
-    Personal State Monitor (Mood & Alcohol)
-  </div>
+<style>
+  .mood-matrix-wrapper {
+    background: #0d1117; /* 极简深色背景 */
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+  }
 
+  .matrix-grid {
+    display: grid;
+    /* 7行代表一周 */
+    grid-template-rows: repeat(7, 12px); 
+    grid-auto-flow: column;
+    grid-auto-columns: 12px;
+    gap: 4px;
+  }
+
+  .cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background-color: var(--bg-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* 悬停时仅微亮，不显示文字 */
+  .cell:hover {
+    filter: brightness(1.5);
+    transform: scale(1.1);
+  }
+</style>
+
+<div class="mood-matrix-wrapper">
   <div class="matrix-grid">
-    {% for entry in site.data.moods %}
-      {% comment %} 
-        线性映射公式：(Value - 1) * (255 / 4)
-        心情 m 控制 绿色通道 G
-        酒精 a 控制 红色通道 R
+    {% comment %}
+      设置显示的总天数（例如 84 天代表 12 周）
+    {% endcomment %}
+    {% for i in (1..84) %}
+      {% comment %}
+        这里可以放置更复杂的 Liquid 逻辑来匹配日期。
+        目前为了确保显示，我们先渲染基础色块。
       {% endcomment %}
       
-      {% assign r_raw = entry.a | minus: 1 | times: 63.75 %}
-      {% assign g_raw = entry.m | minus: 1 | times: 63.75 %}
+      {% assign entry = site.data.moods[forloop.index0] %}
       
-      {% comment %} 确保数值在 0-255 之间并取整 {% endcomment %}
-      {% assign r = r_raw | round | at_least: 0 | at_most: 255 %}
-      {% assign g = g_raw | round | at_least: 0 | at_most: 255 %}
-      {% assign b = 80 %} <div class="cell" 
-           style="--bg-color: rgb({{ r }}, {{ g }}, {{ b }});"
-           data-tip="{{ entry.date }} | 心情:{{ entry.m }} 酒精:{{ entry.a }} | {{ entry.note }}">
-      </div>
+      {% if entry %}
+        {% comment %} 有数据：根据 m 和 a 计算沉静色调 {% endcomment %}
+        {% assign hue_shift = entry.a | minus: 1 | times: 25 %}
+        {% assign h = 200 | plus: hue_shift %}
+        {% assign l = entry.m | times: 6 | plus: 15 %}
+        {% assign color = "hsl(" | append: h | append: ", 30%, " | append: l | append: "%)" %}
+      {% else %}
+        {% comment %} 无数据：浅灰色/深灰（克制感） {% endcomment %}
+        {% assign color = "#161b22" %}
+      {% endif %}
+
+      <div class="cell" style="--bg-color: {{ color }};"></div>
     {% endfor %}
   </div>
-
-  <div style="margin-top: 15px; display: flex; align-items: center; gap: 15px; font-size: 11px; color: #586069;">
-    <div style="display: flex; align-items: center; gap: 4px;">
-      <div style="width: 10px; height: 10px; background: rgb(0, 255, 80); border-radius: 2px;"></div> 极好/清醒
-    </div>
-    <div style="display: flex; align-items: center; gap: 4px;">
-      <div style="width: 10px; height: 10px; background: rgb(255, 0, 80); border-radius: 2px;"></div> 低落/多酒
-    </div>
-    <div style="display: flex; align-items: center; gap: 4px;">
-      <div style="width: 10px; height: 10px; background: rgb(255, 255, 80); border-radius: 2px;"></div> 兴奋/微醺
-    </div>
-  </div>
 </div>
-
 
 
 About this page
