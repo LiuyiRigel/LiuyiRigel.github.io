@@ -11,22 +11,3 @@
   a: 4.2
   note: "Celebration night, slightly buzzed."
 
-- date: 2026-04-10
-  m: 2.0
-  a: 1.0
-  note: "Debugging all day, exhausted but sober."
-
-- date: 2026-04-09
-  m: 3.5
-  a: 2.5
-  note: "Regular lab work, one glass of wine."
-
-- date: 2026-04-13
-  m: 5
-  a: 0
-  note: "Regular lab work, one glass of wine."
-
-- date: 2026-04-20
-  m: 0
-  a: 5
-  note: "Regular lab work, one glass of wine."
