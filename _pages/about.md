@@ -67,157 +67,154 @@ redirect_from:
 
 <style>
   :root {
-    /* --- (GitHub Style) --- */
-    --wall-width-container: 95%; /* 灰色背景框占页面的宽度 */
-    
-    /* 定义色块为长方形像素，固定大小 */
-    --cell-width: 13px;          
-    --cell-height: 10px;         
-    
-    --cell-gap: 4px;             /* 色块间距 */
-    --cell-radius: 2px;          /* 微圆角 */
-    --container-radius: 6px;     /* 大容器圆角 */
-    
-    /* 调淡底色，减轻厚重感 */
-    --bg-gray-lighter: #fbfbfb;  /* 沉静极浅灰 */
-    --empty-color: #f1f1f1;      /* N/A 色块调淡 */
+    /* --- 年度墙超参数 --- */
+    --wall-bg: #f0f2f5;          /* 深一点的背景灰 */
+    --empty-cell: #ffffff;       /* 纯白空色块，与背景拉开层次 */
+    --cell-w: 12px;
+    --cell-h: 9px;
+    --gap: 3px;
+    --radius: 2px;
   }
 
-  .year-matrix-wrapper-v2 {
-    background: var(--bg-gray-lighter);
-    padding: 30px 0; /* 上下留白 */
-    border-radius: var(--container-radius);
+  .year-matrix-wrapper-v3 {
+    background: var(--wall-bg);
+    padding: 30px 40px;
+    border-radius: 8px;
     margin: 40px auto;
-    width: var(--wall-width-container);
+    width: fit-content; /* 紧凑包裹，确保居中 */
     display: flex;
     flex-direction: column;
-    align-items: center; /* 居中内容 */
-    border: 1px solid #e5e5e5;
-    font-family: -apple-system, sans-serif;
+    border: 1px solid #e1e4e8;
+    font-family: -apple-system, system-ui, sans-serif;
   }
 
-  /* 坐标系容器：fit-content 确保左右完全对称 */
-  .matrix-container-with-axes-v2 {
+  .matrix-main-container {
     display: grid;
-    grid-template-columns: auto auto; 
-    gap: 12px;
-    width: fit-content; 
-    margin: 0 auto;
-    padding: 0 40px; /* 决定整体在容器内的呼吸感 */
+    grid-template-columns: 30px 1fr; /* 纵轴空间 */
+    grid-template-rows: 20px 1fr;    /* 横轴(月份)空间 */
+    gap: 4px;
   }
 
-  .y-axis-v2 {
+  /* 月份横轴 */
+  .month-axis {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #888;
+    padding-bottom: 5px;
+  }
+
+  /* 星期纵轴 */
+  .day-axis {
+    grid-row: 2;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     font-size: 9px;
-    color: #bbb;
-    text-transform: uppercase;
-    text-align: right;
-    padding: 3px 0;
-    /* 动态匹配网格高度 */
-    height: calc(7 * var(--cell-height) + 6 * var(--cell-gap));
+    color: #aaa;
+    padding: 2px 0;
+    height: calc(7 * var(--cell-h) + 6 * var(--gap));
   }
 
-  .matrix-grid-v2 {
+  .matrix-grid-v3 {
     display: grid;
-    grid-template-rows: repeat(7, var(--cell-height)); 
+    grid-template-rows: repeat(7, var(--cell-h));
     grid-auto-flow: column;
-    grid-auto-columns: var(--cell-width);
-    gap: var(--cell-gap);
+    grid-auto-columns: var(--cell-w);
+    gap: var(--gap);
   }
 
   .cell {
-    width: var(--cell-width);
-    height: var(--cell-height);
-    border-radius: var(--cell-radius);
+    width: var(--cell-w);
+    height: var(--cell-h);
+    border-radius: var(--radius);
     background-color: var(--bg-color);
-    transition: all 0.2s ease-in-out;
-    position: relative;
-    cursor: crosshair;
+    transition: transform 0.2s;
+    border: 1px solid rgba(0,0,0,0.03); /* 极淡边框增强定义感 */
   }
 
-  /* 悬停微亮，不改变大小 */
   .cell:hover {
-    filter: brightness(0.9);
-    transform: scale(1.1);
-    z-index: 100;
+    transform: scale(1.3);
+    z-index: 10;
+    filter: saturate(1.2);
   }
 
-  /* Tooltip: 适配新比例 */
   .cell:hover::after {
     content: attr(data-tip);
     position: absolute;
-    background: rgba(50, 50, 50, 0.9);
+    background: #333;
     color: #fff;
     padding: 4px 8px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-size: 9px;
-    bottom: 220%; /* 调高一点 */
+    bottom: 250%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
 
-  /* 精简学术图注 */
-  .matrix-caption-v2 {
-    margin-top: 25px;
+  .matrix-caption-v3 {
+    margin-top: 20px;
     font-size: 11px;
-    color: #999;
-    width: fit-content;
-    padding: 10px 40px 0 40px;
-    border-top: 1px solid #e8e8e8;
-    text-align: left;
-    max-width: 85%;
+    color: #777;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
   }
-
-  .matrix-caption-v2 b { color: #444; }
 </style>
 
-<div class="year-matrix-wrapper-v2">
-  <div class="matrix-container-with-axes-v2">
-    <div class="y-axis-v2">
+<div class="year-matrix-wrapper-v3">
+  <div class="matrix-main-container">
+    <div class="month-axis">
+      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+    </div>
+
+    <div class="day-axis">
       <span>M</span><span>W</span><span>F</span><span>S</span>
     </div>
 
-    <div class="matrix-grid-v2">
+    <div class="matrix-grid-v3">
       {% assign seconds_per_day = 86400 %}
-      {% assign total_days = 91 %} {% assign end_date_seconds = "now" | date: "%s" | plus: 0 %}
+      {% assign total_days = 364 %} {% comment %} 全年约 52 周 {% endcomment %}
       
-      {% for i in (1..total_days) %}
-        {% assign offset_days = total_days | minus: i %}
-        {% assign offset_seconds = offset_days | times: seconds_per_day %}
-        {% assign current_day_seconds = end_date_seconds | minus: offset_seconds %}
-        
-        {% assign current_date_str = current_day_seconds | date: "%Y-%m-%d" %}
-        {% assign current_day_of_week = current_day_seconds | date: "%u" %}
+      {% comment %} 寻找到今年第一个周一 {% endcomment %}
+      {% assign year_start = "now" | date: "%Y-01-01" %}
+      {% assign start_dow = year_start | date: "%u" | minus: 1 %}
+      {% assign start_seconds = year_start | date: "%s" | minus: first_monday_offset %}
+      {% assign first_monday = start_seconds | minus: start_dow | times: seconds_per_day %}
 
-        {% comment %} YML 检索 {% endcomment %}
-        {% assign entry = site.data.moods | where: "date", current_date_str | first %}
+      {% for i in (0..total_days) %}
+        {% assign current_seconds = year_start | date: "%s" | plus: 0 %}
+        {% comment %} 这里简化逻辑：展示从 1月1日开始的 52 周 {% endcomment %}
+        {% assign offset = i | times: seconds_per_day %}
+        {% assign day_ts = year_start | date: "%s" | plus: offset %}
+        {% assign date_str = day_ts | date: "%Y-%m-%d" %}
+        {% assign dow = day_ts | date: "%u" %}
+
+        {% assign entry = site.data.moods | where: "date", date_str | first %}
 
         {% if entry %}
-          {% comment %} HSL：A 控制色相(210-310), M 控制亮度(20-45) {% endcomment %}
-          {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
-          {% assign l = entry.m | times: 5 | plus: 20 %}
-          {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
-          {% assign tip = current_date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
+          {% comment %} 提升明度：L 从 45% 起跳 {% endcomment %}
+          {% assign h = entry.a | minus: 1 | times: 25 | plus: 200 %}
+          {% assign l = entry.m | times: 7 | plus: 40 %}
+          {% assign color = "hsl(" | append: h | append: ", 40%, " | append: l | append: "%)" %}
+          {% assign tip = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
         {% else %}
-          {% assign color = var(--empty-color) %}
-          {% assign tip = current_date_str | append: " | N/A" %}
+          {% assign color = "var(--empty-cell)" %}
+          {% assign tip = date_str %}
         {% endif %}
 
         <div class="cell" 
-             style="background-color: {{ color }}; grid-row: {{ current_day_of_week }};" 
+             style="--bg-color: {{ color }}; grid-row: {{ dow }};" 
              data-tip="{{ tip }}">
         </div>
       {% endfor %}
     </div>
   </div>
 
-  <div class="matrix-caption-v2">
-    <b>Fig 1.</b> Annual state manifold (Pixel-style). Mood (Lightness) and Alcohol (Hue) variables. 
-    Alignment by ISO day-of-week; N/A indicates null data points.
+  <div class="matrix-caption-v3">
+    <b>Fig 1.</b> Annual State Manifest ({{ "now" | date: "%Y" }}). 
+    HSL-mapped grid showing physiological (Hue) and psychological (Lightness) variance.
   </div>
 </div>
 
