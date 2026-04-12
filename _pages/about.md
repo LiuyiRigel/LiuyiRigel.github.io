@@ -96,7 +96,7 @@ redirect_from:
       grid-template-rows: 20px 1fr; 
       column-gap: 12px; 
       row-gap: 8px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     .month-labels { 
