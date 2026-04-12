@@ -67,15 +67,10 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 核心视觉参数 --- */
     --wall-bg: #f8fafc;
     --text-gray: #718096;
     --empty-cell: #ffffff;
-    
-    /* 绿墙比例 */
     --cell-w: 13px; --cell-h: 10px; --gap: 3px;
-
-    /* 坐标系比例 (5:3) */
     --scatter-w: 500px; --scatter-h: 300px;
     --dot-size: 14px;
   }
@@ -87,7 +82,6 @@ redirect_from:
     border: 1px solid #e2e8f0; font-family: -apple-system, system-ui, sans-serif;
   }
 
-  /* --- Wall 样式 --- */
   .matrix-wrapper {
     display: grid; grid-template-columns: 35px 1fr;
     grid-template-rows: 25px 1fr; gap: 6px; margin-bottom: 50px;
@@ -97,22 +91,20 @@ redirect_from:
   .matrix-grid { display: grid; grid-template-rows: repeat(7, var(--cell-h)); grid-auto-flow: column; gap: var(--gap); }
   .cell { width: var(--cell-w); height: var(--cell-h); border-radius: 2px; background: var(--empty-cell); border: 1px solid rgba(0,0,0,0.03); position: relative; }
 
-  /* --- Scatter 样式 --- */
-  .scatter-plots { width: var(--scatter-w); position: relative; }
+  .scatter-plots { width: var(--scatter-w); position: relative; margin-top: 20px;}
   .scatter-canvas {
     width: var(--scatter-w); height: var(--scatter-h);
     border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
     position: relative; overflow: visible;
-    /* 渐变背景：对齐 image_1.png 的流形色彩 */
     background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #5eead4 100%);
   }
   .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .title-y { left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
-  .title-x { bottom: -35px; left: 50%; transform: translateX(-50%); }
+  .title-y { left: -85px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 150px; text-align: center; }
+  .title-x { bottom: -45px; left: 50%; transform: translateX(-50%); }
   
   .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
-  .tick-y1 { bottom: 5%; left: -20px; } .tick-y5 { top: 5%; left: -20px; }
-  .tick-x1 { bottom: -20px; left: 5%; } .tick-x5 { bottom: -20px; right: 5%; }
+  .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
+  .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
 
   .dot {
     width: var(--dot-size); height: var(--dot-size); border-radius: 50%; border: 2px solid #ffffff;
@@ -121,7 +113,6 @@ redirect_from:
   }
   .dot:hover { transform: translate(-50%, 50%) scale(1.6); z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
-  /* 统一 Tooltip */
   .cell:hover::after, .dot:hover::after {
     content: attr(data-tip); position: absolute; background: #1a202c; color: #fff;
     padding: 6px 10px; border-radius: 4px; font-size: 10px; bottom: 180%; left: 50%;
@@ -130,34 +121,39 @@ redirect_from:
 </style>
 
 <div class="academic-dashboard-container">
-  
   <div class="matrix-wrapper">
     <div class="month-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
     <div class="day-labels"><span>M</span><span>W</span><span>F</span><span>S</span></div>
     <div class="matrix-grid">
-      {% assign moods_source = site.data.moods %}
-      {% for i in (0..364) %}
-        {% assign day_ts = i | times: 86400 | plus: 1735689600 %}
+      {% comment %} 动态获取当前年份的第一天时间戳 {% endcomment %}
+      {% assign current_year = "now" | date: "%Y" %}
+      {% assign year_start_str = current_year | append: "-01-01" %}
+      {% assign start_ts = year_start_str | date: "%s" | plus: 0 %}
+      
+      {% for i in (0..365) %}
+        {% assign day_offset = i | times: 86400 %}
+        {% assign day_ts = start_ts | plus: day_offset %}
         {% assign d_str = day_ts | date: "%Y-%m-%d" %}
         {% assign d_ow = day_ts | date: "%u" %}
         
-        {% comment %} 从数据源检索 {% endcomment %}
-        {% assign day_entry = moods_source | where: "date", d_str | first %}
+        {% assign day_entry = site.data.moods | where: "date", d_str | first %}
 
         {% if day_entry %}
-          {% comment %} 
-            强制浮点数定义 (0.0 方案) 
-          {% endcomment %}
           {% assign m_f = day_entry.m | plus: 0.0 %}
           {% assign a_f = day_entry.a | plus: 0.0 %}
           
-          {% comment %} 颜色算法：A决定色相(155-200)，M/A共同决定明度 {% endcomment %}
+          {% comment %} 颜色算法修复：Liquid 没有乘法优先级，必须分步计算 {% endcomment %}
           {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
-          {% assign lit = m_f | times: 11.0 | minus: a_f | times: 7.0 | plus: 30.0 %}
+          
+          {% assign lit_part1 = m_f | times: 11.0 %}
+          {% assign lit_part2 = a_f | times: 7.0 %}
+          {% assign lit = lit_part1 | minus: lit_part2 | plus: 30.0 %}
+          
           {% assign cell_color = "hsl(" | append: hue | append: ", 40%, " | append: lit | append: "%)" %}
           
           <div class="cell" style="background-color: {{ cell_color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ day_entry.m }} Alcohol: {{ day_entry.a }}"></div>
         {% else %}
+          {% comment %} 填充空白格保证网格不乱 {% endcomment %}
           <div class="cell" style="grid-row: {{ d_ow }};"></div>
         {% endif %}
       {% endfor %}
@@ -172,24 +168,21 @@ redirect_from:
 
     <div class="scatter-canvas">
       {% for item in site.data.moods %}
-        {% comment %} 
-          强制浮点数定义声明 
-        {% endcomment %}
         {% assign m_val = item.m | plus: 0.0 %}
         {% assign a_val = item.a | plus: 0.0 %}
 
-        {% comment %} 
-          坐标映射逻辑 (1-5 映射到 5%-95% 容器空间)
-        {% endcomment %}
+        {% comment %} 坐标映射逻辑修正 {% endcomment %}
         {% assign x_coord = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y_coord = 100.0 | minus: y_raw %}
 
-        {% comment %} 
-          颜色映射：与 Wall 保持物理逻辑完全一致 
-        {% endcomment %}
+        {% comment %} 颜色映射逻辑同步修复 {% endcomment %}
         {% assign h_dot = a_val | minus: 1.0 | times: 11.25 | plus: 155.0 %}
-        {% assign l_dot = m_val | times: 11.0 | minus: a_val | times: 7.0 | plus: 30.0 %}
+        
+        {% assign l_part1 = m_val | times: 11.0 %}
+        {% assign l_part2 = a_val | times: 7.0 %}
+        {% assign l_dot = l_part1 | minus: l_part2 | plus: 30.0 %}
+        
         {% assign color_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
 
         <div class="dot" 
