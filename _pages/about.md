@@ -82,78 +82,88 @@ redirect_from:
     border: 1px solid #e2e8f0; font-family: -apple-system, system-ui, sans-serif;
   }
 
+  /* --- Wall 样式恢复 --- */
   .matrix-wrapper {
     display: grid; grid-template-columns: 35px 1fr;
     grid-template-rows: 25px 1fr; gap: 6px; margin-bottom: 50px;
   }
-  .month-labels { grid-column: 2; display: flex; justify-content: space-between; font-size: 10px; color: var(--text-gray); }
-  .day-labels { grid-row: 2; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: var(--text-gray); height: 88px; }
   .matrix-grid { display: grid; grid-template-rows: repeat(7, var(--cell-h)); grid-auto-flow: column; gap: var(--gap); }
-  .cell { width: var(--cell-w); height: var(--cell-h); border-radius: 2px; background: var(--empty-cell); border: 1px solid rgba(0,0,0,0.03); position: relative; }
+  
+  .cell { 
+    width: var(--cell-w); height: var(--cell-h); border-radius: 2px; 
+    background: var(--empty-cell); border: 1px solid rgba(0,0,0,0.03); 
+    position: relative; transition: all 0.2s ease; 
+  }
 
-  .scatter-plots { width: var(--scatter-w); position: relative; margin-top: 20px;}
+  /* 找回消失的悬停效果 */
+  .cell:hover {
+    transform: scale(1.4);
+    z-index: 50;
+    filter: brightness(1.1) saturate(1.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* --- Scatter 样式修复 --- */
+  .scatter-plots { width: var(--scatter-w); position: relative; margin-top: 20px; }
   .scatter-canvas {
     width: var(--scatter-w); height: var(--scatter-h);
     border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
     position: relative; overflow: visible;
+    /* 背景渐变逻辑同步 */
     background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #5eead4 100%);
   }
-  .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .title-y { left: -85px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 150px; text-align: center; }
-  .title-x { bottom: -45px; left: 50%; transform: translateX(-50%); }
-  
-  .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
-  .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
-  .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
 
   .dot {
     width: var(--dot-size); height: var(--dot-size); border-radius: 50%; border: 2px solid #ffffff;
-    position: absolute; transform: translate(-50%, 50%); z-index: 10;
+    position: absolute; transform: translate(-50%, -50%); z-index: 10;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .dot:hover { transform: translate(-50%, 50%) scale(1.6); z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .dot:hover { transform: translate(-50%, -50%) scale(1.6); z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
+  /* 统一 Tooltip 逻辑 */
   .cell:hover::after, .dot:hover::after {
     content: attr(data-tip); position: absolute; background: #1a202c; color: #fff;
-    padding: 6px 10px; border-radius: 4px; font-size: 10px; bottom: 180%; left: 50%;
+    padding: 6px 10px; border-radius: 4px; font-size: 10px; bottom: 220%; left: 50%;
     transform: translateX(-50%); white-space: pre; z-index: 200; pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
+
+  /* 坐标轴标签等辅助样式 */
+  .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; }
+  .title-y { left: -90px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
+  .title-x { bottom: -45px; left: 50%; transform: translateX(-50%); }
+  .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
+  .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
+  .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
 </style>
 
 <div class="academic-dashboard-container">
+  
   <div class="matrix-wrapper">
     <div class="month-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
     <div class="day-labels"><span>M</span><span>W</span><span>F</span><span>S</span></div>
     <div class="matrix-grid">
-      {% comment %} 动态获取当前年份的第一天时间戳 {% endcomment %}
-      {% assign current_year = "now" | date: "%Y" %}
-      {% assign year_start_str = current_year | append: "-01-01" %}
-      {% assign start_ts = year_start_str | date: "%s" | plus: 0 %}
+      {% assign start_ts = "2026-01-01" | date: "%s" | plus: 0 %}
       
-      {% for i in (0..365) %}
-        {% assign day_offset = i | times: 86400 %}
-        {% assign day_ts = start_ts | plus: day_offset %}
-        {% assign d_str = day_ts | date: "%Y-%m-%d" %}
-        {% assign d_ow = day_ts | date: "%u" %}
-        
-        {% assign day_entry = site.data.moods | where: "date", d_str | first %}
+      {% for i in (0..364) %}
+        {% assign d_ts = i | times: 86400 | plus: start_ts %}
+        {% assign d_str = d_ts | date: "%Y-%m-%d" %}
+        {% assign d_ow = d_ts | date: "%u" %}
+        {% assign entry = site.data.moods | where: "date", d_str | first %}
 
-        {% if day_entry %}
-          {% assign m_f = day_entry.m | plus: 0.0 %}
-          {% assign a_f = day_entry.a | plus: 0.0 %}
+        {% if entry %}
+          {% assign m = entry.m | plus: 0.0 %}
+          {% assign a = entry.a | plus: 0.0 %}
           
-          {% comment %} 颜色算法修复：Liquid 没有乘法优先级，必须分步计算 {% endcomment %}
-          {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+          {% comment %} 颜色算法逻辑重构：确保与 Scatter 背景流形一致 {% endcomment %}
+          {% assign hue = a | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+          {% assign l_base = m | times: 11.0 %}
+          {% assign l_sub = a | times: 7.0 %}
+          {% assign lit = l_base | minus: l_sub | plus: 30.0 %}
+          {% assign color = "hsl(" | append: hue | append: ", 42%, " | append: lit | append: "%)" %}
           
-          {% assign lit_part1 = m_f | times: 11.0 %}
-          {% assign lit_part2 = a_f | times: 7.0 %}
-          {% assign lit = lit_part1 | minus: lit_part2 | plus: 30.0 %}
-          
-          {% assign cell_color = "hsl(" | append: hue | append: ", 40%, " | append: lit | append: "%)" %}
-          
-          <div class="cell" style="background-color: {{ cell_color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ day_entry.m }} Alcohol: {{ day_entry.a }}"></div>
+          <div class="cell" style="background-color: {{ color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ entry.m }} Alcohol: {{ entry.a }}"></div>
         {% else %}
-          {% comment %} 填充空白格保证网格不乱 {% endcomment %}
           <div class="cell" style="grid-row: {{ d_ow }};"></div>
         {% endif %}
       {% endfor %}
@@ -171,23 +181,21 @@ redirect_from:
         {% assign m_val = item.m | plus: 0.0 %}
         {% assign a_val = item.a | plus: 0.0 %}
 
-        {% comment %} 坐标映射逻辑修正 {% endcomment %}
-        {% assign x_coord = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
+        {% comment %} 坐标映射逻辑 {% endcomment %}
+        {% assign x = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
-        {% assign y_coord = 100.0 | minus: y_raw %}
+        {% assign y = 100.0 | minus: y_raw %}
 
-        {% comment %} 颜色映射逻辑同步修复 {% endcomment %}
+        {% comment %} 这里的算法必须与上面的 Wall 完全一致 {% endcomment %}
         {% assign h_dot = a_val | minus: 1.0 | times: 11.25 | plus: 155.0 %}
-        
-        {% assign l_part1 = m_val | times: 11.0 %}
-        {% assign l_part2 = a_val | times: 7.0 %}
-        {% assign l_dot = l_part1 | minus: l_part2 | plus: 30.0 %}
-        
-        {% assign color_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
+        {% assign l_d_base = m_val | times: 11.0 %}
+        {% assign l_d_sub = a_val | times: 7.0 %}
+        {% assign l_dot = l_d_base | minus: l_d_sub | plus: 30.0 %}
+        {% assign c_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
 
         <div class="dot" 
-             style="background-color: {{ color_dot }}; left: {{ x_coord }}%; top: {{ y_coord }}%;" 
-             data-tip="{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}">
+             style="background-color: {{ c_dot }}; left: {{ x }}%; top: {{ y }}%;" 
+             data-tip="{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}">
         </div>
       {% endfor %}
     </div>
