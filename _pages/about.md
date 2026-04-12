@@ -81,7 +81,7 @@ redirect_from:
     padding: 30px 40px;
     border-radius: 8px;
     margin: 40px auto;
-    width: fit-content; /* 紧凑包裹，确保居中 */
+    width: 90%; /* 紧凑包裹，确保居中 */
     display: flex;
     flex-direction: column;
     border: 1px solid #e1e4e8;
@@ -170,7 +170,7 @@ redirect_from:
     </div>
 
     <div class="day-axis">
-      <span>M</span><span>W</span><span>F</span><span>S</span>
+      <span>Mon</span><span>Wed</span><span>Fri</span><span>Sat</span>
     </div>
 
     <div class="matrix-grid-v3">
