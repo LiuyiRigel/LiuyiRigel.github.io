@@ -68,18 +68,18 @@ redirect_from:
 <style>
   :root {
     /* --- 超参数调节面板 (Hyper-parameters) --- */
-    --wall-width: 95%;          /* 容器占据页面的宽度 */
-    --cell-size: 11px;          /* 色块宽度：控制它变小的核心 */
-    --cell-aspect-ratio: 1.8 / 1; /* 压扁比例：宽/高 */
-    --cell-gap: 4px;            /* 色块间距 */
-    --cell-radius: 3px;         /* 色块圆角 */
-    --container-radius: 10px;    /* 背景容器圆角 */
-    --bg-gray: #f2f2f2;         /* 灰度背景 */
+    --wall-width: 95%;            /* 容器宽度 */
+    --cell-size: 11px;            /* 色块宽度 */
+    --cell-aspect-ratio: 1.8 / 1;   /* 压扁比例 (宽/高) */
+    --cell-gap: 4px;              /* 色块间距 */
+    --cell-radius: 3px;           /* 色块圆角 */
+    --container-radius: 12px;      /* 背景大框圆角 */
+    --bg-gray: #f2f2f2;           /* 学术浅灰背景 */
   }
 
   .mood-matrix-wrapper {
     background: var(--bg-gray);
-    padding: 25px 0; /* 上下留白 */
+    padding: 30px 0;
     border-radius: var(--container-radius);
     margin: 30px auto;
     width: var(--wall-width);
@@ -87,16 +87,16 @@ redirect_from:
     flex-direction: column;
     align-items: center;
     border: 1px solid #e5e5e5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   }
 
-  /* 核心对齐逻辑：使用 fit-content 确保左右间距完全由 margin: auto 分配 */
   .matrix-container-with-axes {
     display: grid;
-    grid-template-columns: auto auto; /* 纵轴和网格各占其位 */
+    grid-template-columns: auto auto; 
     gap: 12px;
     width: fit-content; 
     margin: 0 auto;
-    padding: 0 40px; /* 这里的 padding 决定了左右两端的呼吸感 */
+    padding: 0 40px; /* 决定左右对称的呼吸感 */
   }
 
   .y-axis {
@@ -109,13 +109,15 @@ redirect_from:
     letter-spacing: 0.5px;
     text-align: right;
     padding: 2px 0;
+    /* 动态计算 Y 轴高度以匹配网格 */
+    height: calc(7 * (var(--cell-size) / 1.8) + 6 * var(--cell-gap));
   }
 
   .matrix-grid {
     display: grid;
-    grid-template-rows: repeat(7, 1fr); 
+    grid-template-rows: repeat(7, auto); 
     grid-auto-flow: column;
-    grid-auto-columns: var(--cell-size); /* 固定宽度 */
+    grid-auto-columns: var(--cell-size);
     gap: var(--cell-gap);
   }
 
@@ -123,42 +125,45 @@ redirect_from:
     width: var(--cell-size);
     aspect-ratio: var(--cell-aspect-ratio);
     border-radius: var(--cell-radius);
-    background-color: var(--bg-color);
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-in-out;
     position: relative;
+    cursor: crosshair;
   }
 
   .cell:hover {
-    filter: brightness(0.9);
-    transform: scale(1.2);
-    z-index: 10;
-  }
-
-  .cell:hover::after {
-    content: attr(data-tip);
-    position: absolute;
-    background: #333;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 2px;
-    font-size: 9px;
-    bottom: 180%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
+    filter: brightness(0.9) contrast(1.1);
+    transform: scale(1.25);
     z-index: 100;
   }
 
-  /* Academic Caption */
+  /* 悬停预览：显示日期与具体数值 */
+  .cell:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    background: rgba(50, 50, 50, 0.9);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-size: 9px;
+    bottom: 200%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
   .matrix-caption {
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 11px;
     color: #999;
     width: fit-content;
     padding: 10px 40px 0 40px;
     border-top: 1px solid #e8e8e8;
     text-align: left;
+    max-width: 85%;
   }
+
+  .matrix-caption b { color: #444; }
 </style>
 
 <div class="mood-matrix-wrapper">
@@ -168,25 +173,43 @@ redirect_from:
     </div>
 
     <div class="matrix-grid">
-      {% for i in (1..91) %} 
-        {% assign entry = site.data.moods[forloop.index0] %}
+      {% assign seconds_per_day = 86400 %}
+      {% assign total_days = 91 %} {% assign end_date_seconds = "now" | date: "%s" | plus: 0 %}
+      
+      {% for i in (1..total_days) %}
+        {% assign offset_days = total_days | minus: i %}
+        {% assign offset_seconds = offset_days | times: seconds_per_day %}
+        {% assign current_day_seconds = end_date_seconds | minus: offset_seconds %}
+        
+        {% assign current_date_str = current_day_seconds | date: "%Y-%m-%d" %}
+        {% assign current_day_of_week = current_day_seconds | date: "%u" %}
+
+        {% comment %} 从 YML 数据中检索匹配日期的条目 {% endcomment %}
+        {% assign entry = site.data.moods | where: "date", current_date_str | first %}
+
         {% if entry %}
+          {% comment %} HSL 映射逻辑：A 控制色相(210-310), M 控制亮度(20-45) {% endcomment %}
           {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
           {% assign l = entry.m | times: 5 | plus: 20 %}
           {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
-          {% assign tip = "M" | append: entry.m | append: " / A" | append: entry.a %}
+          {% assign tip = current_date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
         {% else %}
-          {% assign color = "#e0e0e0" %}
-          {% assign tip = "N/A" %}
+          {% assign color = "#e2e2e2" %}
+          {% assign tip = current_date_str | append: " | No Data" %}
         {% endif %}
-        <div class="cell" style="--bg-color: {{ color }};" data-tip="{{ tip }}"></div>
+
+        <div class="cell" 
+             style="background-color: {{ color }}; grid-row: {{ current_day_of_week }};" 
+             data-tip="{{ tip }}">
+        </div>
       {% endfor %}
     </div>
   </div>
 
   <div class="matrix-caption">
-    <b>Fig 1.</b> State manifold. Mood-Alcohol bivariate HSL mapping. 
-    Longitudinal observation of daily biological and psychological status.
+    <b>Fig 1.</b> Spatiotemporal state manifold. 
+    <b>Color cells</b> map Mood (Lightness) and Alcohol (Hue) variables. 
+    Grid aligned by ISO day-of-week; N/A indicates null data points.
   </div>
 </div>
 
