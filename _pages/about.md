@@ -77,7 +77,7 @@ redirect_from:
       --dot-size: 14px;
       
       background: var(--wall-bg); 
-      padding: 30px; 
+      padding: 35px; 
       border-radius: 12px;
       margin: 20px auto; 
       width: fit-content; 
@@ -88,7 +88,7 @@ redirect_from:
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* --- Wall 布局修复 --- */
+    /* --- Wall 布局 --- */
     .matrix-wrapper {
       display: grid; 
       grid-template-columns: auto 1fr; 
@@ -98,7 +98,6 @@ redirect_from:
       margin-bottom: 40px;
     }
 
-    /* 月份标签：使用 4.34 周为一个月的近似宽度进行定位，确保对齐 */
     .month-labels { 
       grid-column: 2; 
       display: grid;
@@ -136,14 +135,9 @@ redirect_from:
       transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .cell:hover {
-      transform: scale(1.5);
-      z-index: 50;
-      filter: brightness(1.05);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
+    .cell:hover { transform: scale(1.5); z-index: 50; filter: brightness(1.05); }
 
-    /* --- Scatter 布局 --- */
+    /* --- Scatter 布局：修复渐变方向 --- */
     .scatter-plots { width: var(--scatter-w); position: relative; margin-top: 10px; }
     .scatter-canvas {
       width: var(--scatter-w); height: var(--scatter-h);
@@ -151,7 +145,8 @@ redirect_from:
       border-bottom: 2px solid #cbd5e1;
       position: relative; 
       overflow: visible;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #5eead4 100%);
+      /* 修复：左上角浅色 (#5eead4)，右下角深色 (#1e293b) */
+      background: linear-gradient(to bottom right, #5eead4 0%, #334155 65%, #1e293b 100%);
     }
 
     .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -172,24 +167,28 @@ redirect_from:
       transition: transform 0.2s ease;
     }
     
-    .dot:hover { transform: translate(-50%, -50%) scale(1.6); z-index: 100; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .dot:hover { transform: translate(-50%, -50%) scale(1.6); z-index: 100; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
 
-    /* Tooltip 换行与乱码修复 */
+    /* 恢复：Tooltip 备注显示功能 */
     .cell:hover::after, .dot:hover::after {
       content: attr(data-tip); 
       position: absolute; 
-      background: #1a202c; 
+      background: rgba(26, 32, 44, 0.95); 
       color: #fff;
-      padding: 6px 10px; 
-      border-radius: 4px; 
-      font-size: 10px; 
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      font-size: 11px; 
+      line-height: 1.4;
       bottom: 220%; 
       left: 50%;
       transform: translateX(-50%); 
-      white-space: pre; 
+      white-space: pre-wrap; /* 允许换行 */
       z-index: 200; 
       pointer-events: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      width: max-content;
+      max-width: 200px;
+      text-align: left;
     }
   </style>
 
@@ -237,16 +236,18 @@ redirect_from:
         {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y = 100.0 | minus: y_raw %}
 
-        {% comment %} 颜色映射逻辑：必须与 Wall 绝对一致 {% endcomment %}
         {% assign h_dot = a_val | minus: 1.0 | times: 11.25 | plus: 155.0 %}
         {% assign l_d1 = m_val | times: 11.0 %}
         {% assign l_d2 = a_val | times: 7.0 %}
         {% assign l_dot = l_d1 | minus: l_d2 | plus: 30.0 %}
         {% assign c_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
 
+        {% comment %} 修复：恢复 Note 功能并处理换行 {% endcomment %}
+        {% capture scatter_tip %}{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}{% endcapture %}
+
         <div class="dot" 
              style="background-color: {{ c_dot }}; left: {{ x }}%; top: {{ y }}%;" 
-             data-tip="{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}">
+             data-tip="{{ scatter_tip }}">
         </div>
       {% endfor %}
     </div>
