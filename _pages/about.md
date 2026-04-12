@@ -77,7 +77,8 @@ redirect_from:
       --dot-size: 14px;
       
       background: var(--wall-bg); 
-      padding: 35px; 
+      /* 修复点 1：增加内边距防止文本切断 */
+      padding: 40px 60px; 
       border-radius: 12px;
       margin: 20px auto; 
       width: fit-content; 
@@ -137,7 +138,7 @@ redirect_from:
 
     .cell:hover { transform: scale(1.5); z-index: 50; filter: brightness(1.05); }
 
-    /* --- Scatter 布局：修复渐变方向 --- */
+    /* --- Scatter 布局 --- */
     .scatter-plots { width: var(--scatter-w); position: relative; margin-top: 10px; }
     .scatter-canvas {
       width: var(--scatter-w); height: var(--scatter-h);
@@ -145,13 +146,22 @@ redirect_from:
       border-bottom: 2px solid #cbd5e1;
       position: relative; 
       overflow: visible;
-      /* 修复：左上角浅色 (#5eead4)，右下角深色 (#1e293b) */
       background: linear-gradient(to bottom right, #5eead4 0%, #334155 65%, #1e293b 100%);
     }
 
-    .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .axis-title { 
+      position: absolute; 
+      font-size: 11px; 
+      color: var(--text-gray); 
+      font-weight: 600; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      /* 修复点 2：防止文本折行 */
+      white-space: nowrap; 
+    }
     .title-y { left: -95px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
-    .title-x { bottom: -45px; left: 50%; transform: translateX(-50%); }
+    /* 修复点 3：微调标题间距 */
+    .title-x { bottom: -50px; left: 50%; transform: translateX(-50%); }
     
     .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
     .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
@@ -169,7 +179,6 @@ redirect_from:
     
     .dot:hover { transform: translate(-50%, -50%) scale(1.6); z-index: 100; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
 
-    /* 恢复：Tooltip 备注显示功能 */
     .cell:hover::after, .dot:hover::after {
       content: attr(data-tip); 
       position: absolute; 
@@ -182,7 +191,7 @@ redirect_from:
       bottom: 220%; 
       left: 50%;
       transform: translateX(-50%); 
-      white-space: pre-wrap; /* 允许换行 */
+      white-space: pre-wrap;
       z-index: 200; 
       pointer-events: none;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
@@ -242,7 +251,6 @@ redirect_from:
         {% assign l_dot = l_d1 | minus: l_d2 | plus: 30.0 %}
         {% assign c_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
 
-        {% comment %} 修复：恢复 Note 功能并处理换行 {% endcomment %}
         {% capture scatter_tip %}{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}{% endcapture %}
 
         <div class="dot" 
