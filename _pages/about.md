@@ -67,57 +67,56 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 年度墙超参数 --- */
-    --wall-bg: #f0f2f5;          /* 深一点的背景灰 */
-    --empty-cell: #ffffff;       /* 纯白空色块，与背景拉开层次 */
+    /* --- 核心调节参数 --- */
+    --wall-max-width: 1000px;    /* 墙的最大宽度限制 */
+    --bg-frame: #ebedf0;         /* 工业灰框架背景 */
+    --cell-empty: #ffffff;       /* 纯白空色块 (对比鲜明) */
+    
     --cell-w: 12px;
     --cell-h: 9px;
     --gap: 3px;
     --radius: 2px;
   }
 
-  .year-matrix-wrapper-v3 {
-    background: var(--wall-bg);
-    padding: 30px 40px;
+  .adaptive-wall-wrapper {
+    background: var(--bg-frame);
+    padding: 30px;
     border-radius: 8px;
-    margin: 40px auto;
-    width: 90%; /* 紧凑包裹，确保居中 */
+    margin: 30px auto;
+    width: fit-content;
+    max-width: var(--wall-max-width);
+    border: 1px solid #d1d5da;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e1e4e8;
-    font-family: -apple-system, system-ui, sans-serif;
+    align-items: center;
   }
 
-  .matrix-main-container {
-    display: grid;
-    grid-template-columns: 30px 1fr; /* 纵轴空间 */
-    grid-template-rows: 20px 1fr;    /* 横轴(月份)空间 */
-    gap: 4px;
-  }
-
-  /* 月份横轴 */
-  .month-axis {
-    grid-column: 2;
+  /* 季度布局容器：支持换行 */
+  .quarter-layout {
     display: flex;
-    justify-content: space-between;
-    font-size: 9px;
+    flex-wrap: wrap;             /* 核心：空间不足时自动换行 */
+    justify-content: center;
+    gap: 20px;                   /* 季度间的呼吸间距 */
+    width: 100%;
+  }
+
+  .quarter-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: fit-content;
+  }
+
+  .q-header {
+    font-size: 10px;
     color: #888;
-    padding-bottom: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 3px;
   }
 
-  /* 星期纵轴 */
-  .day-axis {
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 9px;
-    color: #aaa;
-    padding: 2px 0;
-    height: calc(7 * var(--cell-h) + 6 * var(--gap));
-  }
-
-  .matrix-grid-v3 {
+  .matrix-sub-grid {
     display: grid;
     grid-template-rows: repeat(7, var(--cell-h));
     grid-auto-flow: column;
@@ -130,14 +129,14 @@ redirect_from:
     height: var(--cell-h);
     border-radius: var(--radius);
     background-color: var(--bg-color);
-    transition: transform 0.2s;
-    border: 1px solid rgba(0,0,0,0.03); /* 极淡边框增强定义感 */
+    transition: transform 0.1s;
+    border: 1px solid rgba(0,0,0,0.05);
   }
 
   .cell:hover {
-    transform: scale(1.3);
-    z-index: 10;
-    filter: saturate(1.2);
+    transform: scale(1.4);
+    z-index: 50;
+    filter: saturate(1.4) brightness(1.1);
   }
 
   .cell:hover::after {
@@ -146,75 +145,77 @@ redirect_from:
     background: #333;
     color: #fff;
     padding: 4px 8px;
-    border-radius: 3px;
+    border-radius: 2px;
     font-size: 9px;
     bottom: 250%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   }
 
-  .matrix-caption-v3 {
-    margin-top: 20px;
+  .wall-caption {
+    margin-top: 25px;
     font-size: 11px;
-    color: #777;
-    border-top: 1px solid #ddd;
+    color: #666;
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid #ccc;
     padding-top: 10px;
   }
 </style>
 
-<div class="year-matrix-wrapper-v3">
-  <div class="matrix-main-container">
-    <div class="month-axis">
-      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-    </div>
+<div class="adaptive-wall-wrapper">
+  <div class="quarter-layout">
+    {% assign seconds_per_day = 86400 %}
+    {% assign current_year = "now" | date: "%Y" %}
+    {% assign year_start = current_year | append: "-01-01" %}
+    
+    {% comment %} 循环 4 个季度 {% endcomment %}
+    {% for q in (0..3) %}
+      <div class="quarter-box">
+        <div class="q-header">Quarter {{ q | plus: 1 }}</div>
+        <div class="matrix-sub-grid">
+          
+          {% assign days_in_q = 91 %} {% comment %} 每个季度固定展示 13 周 {% endcomment %}
+          {% assign q_start_offset = q | times: days_in_q %}
+          
+          {% for i in (0..90) %}
+            {% assign total_offset = q_start_offset | plus: i %}
+            {% assign day_ts = year_start | date: "%s" | plus: 0 %}
+            {% assign offset_sec = total_offset | times: seconds_per_day %}
+            {% assign current_ts = day_ts | plus: offset_sec %}
+            
+            {% assign date_str = current_ts | date: "%Y-%m-%d" %}
+            {% assign dow = current_ts | date: "%u" %}
 
-    <div class="day-axis">
-      <span>Mon</span><span>Wed</span><span>Fri</span><span>Sat</span>
-    </div>
+            {% assign entry = site.data.moods | where: "date", date_str | first %}
 
-    <div class="matrix-grid-v3">
-      {% assign seconds_per_day = 86400 %}
-      {% assign total_days = 364 %} {% comment %} 全年约 52 周 {% endcomment %}
-      
-      {% comment %} 寻找到今年第一个周一 {% endcomment %}
-      {% assign year_start = "now" | date: "%Y-01-01" %}
-      {% assign start_dow = year_start | date: "%u" | minus: 1 %}
-      {% assign start_seconds = year_start | date: "%s" | minus: first_monday_offset %}
-      {% assign first_monday = start_seconds | minus: start_dow | times: seconds_per_day %}
+            {% if entry %}
+              {% comment %} 高明度 HSL 映射 {% endcomment %}
+              {% assign h = entry.a | minus: 1 | times: 25 | plus: 200 %}
+              {% assign l = entry.m | times: 8 | plus: 45 %}
+              {% assign color = "hsl(" | append: h | append: ", 45%, " | append: l | append: "%)" %}
+              {% assign tip = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
+            {% else %}
+              {% assign color = "var(--cell-empty)" %}
+              {% assign tip = date_str %}
+            {% endif %}
 
-      {% for i in (0..total_days) %}
-        {% assign current_seconds = year_start | date: "%s" | plus: 0 %}
-        {% comment %} 这里简化逻辑：展示从 1月1日开始的 52 周 {% endcomment %}
-        {% assign offset = i | times: seconds_per_day %}
-        {% assign day_ts = year_start | date: "%s" | plus: offset %}
-        {% assign date_str = day_ts | date: "%Y-%m-%d" %}
-        {% assign dow = day_ts | date: "%u" %}
-
-        {% assign entry = site.data.moods | where: "date", date_str | first %}
-
-        {% if entry %}
-          {% comment %} 提升明度：L 从 45% 起跳 {% endcomment %}
-          {% assign h = entry.a | minus: 1 | times: 25 | plus: 200 %}
-          {% assign l = entry.m | times: 7 | plus: 40 %}
-          {% assign color = "hsl(" | append: h | append: ", 40%, " | append: l | append: "%)" %}
-          {% assign tip = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
-        {% else %}
-          {% assign color = "var(--empty-cell)" %}
-          {% assign tip = date_str %}
-        {% endif %}
-
-        <div class="cell" 
-             style="--bg-color: {{ color }}; grid-row: {{ dow }};" 
-             data-tip="{{ tip }}">
+            <div class="cell" 
+                 style="--bg-color: {{ color }}; grid-row: {{ dow }};" 
+                 data-tip="{{ tip }}">
+            </div>
+          {% endfor %}
         </div>
-      {% endfor %}
-    </div>
+      </div>
+    {% endfor %}
   </div>
 
-  <div class="matrix-caption-v3">
-    <b>Fig 1.</b> Annual State Manifest ({{ "now" | date: "%Y" }}). 
-    HSL-mapped grid showing physiological (Hue) and psychological (Lightness) variance.
+  <div class="wall-caption">
+    <b>Fig 1.</b> Annual State Manifold ({{ current_year }}). 
+    Multi-quarter layout optimized for high-density visualization. 
+    Color encodes physiological/psychological variance.
   </div>
 </div>
 
