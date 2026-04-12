@@ -66,29 +66,39 @@ redirect_from:
 [//]: (Mood & Alcohol Matrix Visualization - A personal state monitor that maps mood and alcohol levels to a color-coded grid, providing an intuitive visual representation of daily fluctuations. Each cell's color intensity reflects the combined effect of mood and alcohol consumption, allowing for quick insights into patterns and correlations over time.)
 
 <style>
-  /* Academic Container */
+  :root {
+    /* --- 超参数调节面板 (Hyper-parameters) --- */
+    --wall-width: 95%;          /* 墙占据页面的宽度百分比 */
+    --wall-height: auto;        /* 墙的高度 */
+    --cell-aspect-ratio: 2 / 1; /* 压扁色块：2/1 代表宽度是高度的两倍 */
+    --cell-gap: 4px;            /* 色块之间的间距 */
+    --cell-radius: 4px;         /* 色块圆角 */
+    --container-radius: 12px;   /* 背景大容器圆角 */
+    --bg-gray: #f8f9fa;         /* 背景底色 */
+  }
+
   .mood-matrix-wrapper {
-    background: #f8f9fa; /* Lighter academic gray */
-    padding: 25px 35px;
-    border-radius: 4px;
+    background: var(--bg-gray);
+    padding: 20px 30px;
+    border-radius: var(--container-radius);
     margin: 30px auto;
-    width: 92%; /* Adjustable width percentage */
+    width: var(--wall-width);
+    height: var(--wall-height);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid #efefef;
+    border: 1px solid #eeeeee;
   }
 
   .matrix-container-with-axes {
     display: grid;
-    grid-template-columns: 30px 1fr;
+    grid-template-columns: 35px 1fr;
     grid-template-rows: 1fr 20px;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
   }
 
-  /* Axis Labels */
   .y-axis, .x-axis {
     font-size: 9px;
     color: #bbb;
@@ -101,7 +111,7 @@ redirect_from:
     flex-direction: column;
     justify-content: space-between;
     text-align: right;
-    padding: 4px 0;
+    padding: 2px 0;
   }
 
   .x-axis {
@@ -110,80 +120,72 @@ redirect_from:
     justify-content: space-between;
   }
 
-  /* Grid Layout */
   .matrix-grid {
     display: grid;
     grid-template-rows: repeat(7, 1fr); 
     grid-auto-flow: column;
     grid-auto-columns: 1fr;
-    gap: 5px; /* Spacing between cells */
+    gap: var(--cell-gap);
     width: 100%;
   }
 
   .cell {
-    aspect-ratio: 1 / 1;
-    border-radius: 1px;
+    aspect-ratio: var(--cell-aspect-ratio);
+    border-radius: var(--cell-radius);
     background-color: var(--bg-color);
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease;
     position: relative;
   }
 
   .cell:hover {
-    filter: contrast(1.2) brightness(0.9);
-    transform: scale(1.2);
+    filter: brightness(0.9);
+    transform: scale(1.1);
     z-index: 10;
   }
 
-  /* Tooltip */
   .cell:hover::after {
     content: attr(data-tip);
     position: absolute;
-    background: rgba(50, 50, 50, 0.9);
+    background: #333;
     color: #fff;
     padding: 4px 8px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-size: 9px;
-    bottom: 150%;
+    bottom: 160%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
-    z-index: 20;
   }
 
-  /* Simplified Academic Caption */
   .matrix-caption {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 11px;
-    color: #888;
+    color: #999;
     width: 100%;
     text-align: left;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #f0f0f0;
     padding-top: 10px;
   }
-
-  .matrix-caption b { color: #444; }
 </style>
 
 <div class="mood-matrix-wrapper">
   <div class="matrix-container-with-axes">
     <div class="y-axis">
-      <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+      <span>M</span><span>W</span><span>F</span><span>S</span>
     </div>
 
     <div class="matrix-grid">
       {% for i in (1..91) %} 
         {% assign entry = site.data.moods[forloop.index0] %}
-        
         {% if entry %}
-          {% assign h = entry.a | minus: 1 | times: 25 | plus: 200 %}
-          {% assign l = entry.m | times: 6 | plus: 18 %}
-          {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
-          {% assign tip = "M" | append: entry.m | append: " / A" | append: entry.a %}
+          {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
+          {% assign l = entry.m | times: 5 | plus: 20 %}
+          {% assign color = "hsl(" | append: h | append: ", 28%, " | append: l | append: "%)" %}
+          {% assign tip = "M" | append: entry.m | append: " A" | append: entry.a %}
         {% else %}
           {% assign color = "#ececec" %}
           {% assign tip = "N/A" %}
         {% endif %}
-
         <div class="cell" style="--bg-color: {{ color }};" data-tip="{{ tip }}"></div>
       {% endfor %}
     </div>
@@ -194,9 +196,7 @@ redirect_from:
   </div>
 
   <div class="matrix-caption">
-    <b>Figure 1.</b> Spatiotemporal mapping of daily states. 
-    <b>Color cells</b> represent bivariate values of Mood (L) and Alcohol (H). 
-    Low-saturation HSL encoding for longitudinal observation.
+    <b>Fig 1.</b> State manifold. Mood-Alcohol bivariate HSL mapping.
   </div>
 </div>
 
