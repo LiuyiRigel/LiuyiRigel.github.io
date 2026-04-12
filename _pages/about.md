@@ -67,118 +67,135 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 调色盘参数：直接对应 image_1.png 的梦幻感 --- */
-    --h-base: 155;     /* 绿基准 */
-    --h-range: 40;     /* 酒精带来的色相偏移量 */
-    --l-floor: 25%;    /* 最深亮度 (低M/高A) */
-    --l-ceiling: 80%;  /* 最高亮度 (高M/低A) */
+    /* --- 核心视觉参数 --- */
+    --wall-bg: #f8fafc;
+    --text-gray: #718096;
+    --empty-cell: #ffffff;
     
-    --text-gray: #78828e;
-    --dot-border: #ffffff;
+    /* 绿墙比例 */
+    --cell-w: 13px; --cell-h: 10px; --gap: 3px;
+
+    /* 坐标系比例 (5:3) */
+    --scatter-w: 500px; --scatter-h: 300px;
+    --dot-size: 14px;
   }
 
-  .academic-dashboard-wrapper {
-    background: #f8fafc; padding: 40px; border-radius: 12px;
-    margin: 40px auto; width: fit-content; display: flex;
+  .academic-dashboard-container {
+    background: var(--wall-bg); padding: 40px; border-radius: 12px;
+    margin: 20px auto; width: fit-content; display: flex;
     flex-direction: column; align-items: center;
-    border: 1px solid #e2e8f0; font-family: sans-serif;
+    border: 1px solid #e2e8f0; font-family: -apple-system, system-ui, sans-serif;
   }
 
   /* --- Wall 样式 --- */
-  .matrix-main-container {
+  .matrix-wrapper {
     display: grid; grid-template-columns: 35px 1fr;
     grid-template-rows: 25px 1fr; gap: 6px; margin-bottom: 50px;
   }
-  .month-axis { grid-column: 2; display: flex; justify-content: space-between; font-size: 10px; color: var(--text-gray); }
-  .day-axis { grid-row: 2; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: var(--text-gray); height: 81px; }
-  .matrix-grid-final { display: grid; grid-template-rows: repeat(7, 9px); grid-auto-flow: column; grid-auto-columns: 12px; gap: 3px; }
-  .cell { width: 12px; height: 9px; border-radius: 2px; background-color: #fff; border: 1px solid rgba(0,0,0,0.03); position: relative; }
+  .month-labels { grid-column: 2; display: flex; justify-content: space-between; font-size: 10px; color: var(--text-gray); }
+  .day-labels { grid-row: 2; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: var(--text-gray); height: 88px; }
+  .matrix-grid { display: grid; grid-template-rows: repeat(7, var(--cell-h)); grid-auto-flow: column; gap: var(--gap); }
+  .cell { width: var(--cell-w); height: var(--cell-h); border-radius: 2px; background: var(--empty-cell); border: 1px solid rgba(0,0,0,0.03); position: relative; }
 
   /* --- Scatter 样式 --- */
-  .scatter-plots-container { width: 500px; position: relative; }
-  .scatter-frame {
-    width: 500px; height: 300px; border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
+  .scatter-plots { width: var(--scatter-w); position: relative; }
+  .scatter-canvas {
+    width: var(--scatter-w); height: var(--scatter-h);
+    border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
     position: relative; overflow: visible;
-    /* 渐变对齐：从左下深 Midnight Blue 到右上亮 Mint Green */
+    /* 渐变背景：对齐 image_1.png 的流形色彩 */
     background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #5eead4 100%);
   }
-  .axis-label { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; }
-  .label-y { left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
-  .label-x { bottom: -35px; left: 50%; transform: translateX(-50%); }
+  .axis-title { position: absolute; font-size: 11px; color: var(--text-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .title-y { left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  .title-x { bottom: -35px; left: 50%; transform: translateX(-50%); }
   
-  .tick { position: absolute; font-size: 10px; color: #94a3b8; }
-  .tick-y-1 { bottom: 5%; left: -20px; } .tick-y-5 { top: 5%; left: -20px; }
-  .tick-x-1 { bottom: -20px; left: 5%; } .tick-x-5 { bottom: -20px; right: 5%; }
+  .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
+  .tick-y1 { bottom: 5%; left: -20px; } .tick-y5 { top: 5%; left: -20px; }
+  .tick-x1 { bottom: -20px; left: 5%; } .tick-x5 { bottom: -20px; right: 5%; }
 
-  .data-dot {
-    width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--dot-border);
+  .dot {
+    width: var(--dot-size); height: var(--dot-size); border-radius: 50%; border: 2px solid #ffffff;
     position: absolute; transform: translate(-50%, 50%); z-index: 10;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .data-dot:hover { transform: translate(-50%, 50%) scale(1.5); z-index: 100; }
+  .dot:hover { transform: translate(-50%, 50%) scale(1.6); z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
-  /* Tooltip */
-  .cell:hover::after, .data-dot:hover::after {
-    content: attr(data-tip); position: absolute; background: #1e293b; color: #fff;
+  /* 统一 Tooltip */
+  .cell:hover::after, .dot:hover::after {
+    content: attr(data-tip); position: absolute; background: #1a202c; color: #fff;
     padding: 6px 10px; border-radius: 4px; font-size: 10px; bottom: 180%; left: 50%;
-    transform: translateX(-50%); white-space: pre; z-index: 200;
+    transform: translateX(-50%); white-space: pre; z-index: 200; pointer-events: none;
   }
 </style>
 
-<div class="academic-dashboard-wrapper">
+<div class="academic-dashboard-container">
   
-  <div class="matrix-main-container">
-    <div class="month-axis"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
-    <div class="day-axis"><span>M</span><span>W</span><span>F</span><span>S</span></div>
-    <div class="matrix-grid-final">
-      {% assign moods_data = site.data.moods %}
+  <div class="matrix-wrapper">
+    <div class="month-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
+    <div class="day-labels"><span>M</span><span>W</span><span>F</span><span>S</span></div>
+    <div class="matrix-grid">
+      {% assign moods_source = site.data.moods %}
       {% for i in (0..364) %}
         {% assign day_ts = i | times: 86400 | plus: 1735689600 %}
-        {% assign date_str = day_ts | date: "%Y-%m-%d" %}
-        {% assign dow = day_ts | date: "%u" %}
+        {% assign d_str = day_ts | date: "%Y-%m-%d" %}
+        {% assign d_ow = day_ts | date: "%u" %}
         
-        {% comment %} 修正检索：Liquid 必须精准匹配 {% endcomment %}
-        {% assign entry = moods_data | where: "date", date_str | first %}
+        {% comment %} 从数据源检索 {% endcomment %}
+        {% assign day_entry = moods_source | where: "date", d_str | first %}
 
-        {% if entry %}
-          {% comment %} 强制转换为数字避免映射错误 {% endcomment %}
-          {% assign m_val = entry.m | plus: 0.0 %}
-          {% assign a_val = entry.a | plus: 0.0 %}
+        {% if day_entry %}
+          {% comment %} 
+            强制浮点数定义 (0.0 方案) 
+          {% endcomment %}
+          {% assign m_f = day_entry.m | plus: 0.0 %}
+          {% assign a_f = day_entry.a | plus: 0.0 %}
           
-          {% assign h = a_val | minus: 1 | times: 11 | plus: 155 %}
-          {% assign l = m_val | times: 11 | minus: a_val | times: 7 | plus: 30 %}
-          {% assign color = "hsl(" | append: h | append: ", 40%, " | append: l | append: "%)" %}
-          <div class="cell" style="background-color: {{ color }}; grid-row: {{ dow }};" data-tip="{{ date_str }} M:{{ entry.m }} A:{{ entry.a }}"></div>
+          {% comment %} 颜色算法：A决定色相(155-200)，M/A共同决定明度 {% endcomment %}
+          {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+          {% assign lit = m_f | times: 11.0 | minus: a_f | times: 7.0 | plus: 30.0 %}
+          {% assign cell_color = "hsl(" | append: hue | append: ", 40%, " | append: lit | append: "%)" %}
+          
+          <div class="cell" style="background-color: {{ cell_color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ day_entry.m }} Alcohol: {{ day_entry.a }}"></div>
         {% else %}
-          <div class="cell" grid-row: {{ dow }}></div>
+          <div class="cell" style="grid-row: {{ d_ow }};"></div>
         {% endif %}
       {% endfor %}
     </div>
   </div>
 
-  <div class="scatter-plots-container">
-    <div class="axis-label label-y">Mood (1-5)</div>
-    <div class="axis-label label-x">Alcohol (1-5)</div>
-    <div class="tick tick-y-1">1.0</div><div class="tick tick-y-5">5.0</div>
-    <div class="tick tick-x-1">1.0</div><div class="tick tick-x-5">5.0</div>
+  <div class="scatter-plots">
+    <div class="axis-title title-y">Positive Mood</div>
+    <div class="axis-title title-x">Alcohol Consumption</div>
+    <div class="axis-tick tick-y1">1.0</div><div class="axis-tick tick-y5">5.0</div>
+    <div class="axis-tick tick-x1">1.0</div><div class="axis-tick tick-x5">5.0</div>
 
-    <div class="scatter-frame">
+    <div class="scatter-canvas">
       {% for item in site.data.moods %}
-        {% assign m = item.m | plus: 0.0 %}
-        {% assign a = item.a | plus: 0.0 %}
+        {% comment %} 
+          强制浮点数定义声明 
+        {% endcomment %}
+        {% assign m_val = item.m | plus: 0.0 %}
+        {% assign a_val = item.a | plus: 0.0 %}
 
-        {% comment %} 坐标映射修复：1.0->5%, 5.0->95% {% endcomment %}
-        {% assign x_perc = a | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
-        {% assign y_raw = m | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
-        {% assign y_perc = 100 | minus: y_raw %}
+        {% comment %} 
+          坐标映射逻辑 (1-5 映射到 5%-95% 容器空间)
+        {% endcomment %}
+        {% assign x_coord = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
+        {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
+        {% assign y_coord = 100.0 | minus: y_raw %}
 
-        {% comment %} 颜色映射与 Wall 完全一致 {% endcomment %}
-        {% assign h_dot = a | minus: 1 | times: 11 | plus: 155 %}
-        {% assign l_dot = m | times: 11 | minus: a | times: 7 | plus: 30 %}
-        {% assign c_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
+        {% comment %} 
+          颜色映射：与 Wall 保持物理逻辑完全一致 
+        {% endcomment %}
+        {% assign h_dot = a_val | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+        {% assign l_dot = m_val | times: 11.0 | minus: a_val | times: 7.0 | plus: 30.0 %}
+        {% assign color_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
 
-        <div class="data-dot" style="background-color: {{ c_dot }}; left: {{ x_perc }}%; top: {{ y_perc }}%;" 
-             data-tip="{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}"></div>
+        <div class="dot" 
+             style="background-color: {{ color_dot }}; left: {{ x_coord }}%; top: {{ y_coord }}%;" 
+             data-tip="{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}">
+        </div>
       {% endfor %}
     </div>
   </div>
