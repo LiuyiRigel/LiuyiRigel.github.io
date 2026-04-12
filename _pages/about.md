@@ -68,68 +68,59 @@ redirect_from:
 <style>
   :root {
     /* --- 超参数调节面板 (Hyper-parameters) --- */
-    --wall-width: 95%;          /* 墙占据页面的宽度百分比 */
-    --wall-height: auto;        /* 墙的高度 */
-    --cell-aspect-ratio: 1 / 1; /* 压扁色块：2/1 代表宽度是高度的两倍 */
-    --cell-gap: 10px;            /* 色块之间的间距 */
-    --cell-radius: 5px;         /* 色块圆角 */
-    --container-radius: 20px;   /* 背景大容器圆角 */
-    --bg-gray: #f8f9fa;         /* 背景底色 */
+    --wall-width: 95%;          /* 容器占据页面的宽度 */
+    --cell-size: 11px;          /* 色块宽度：控制它变小的核心 */
+    --cell-aspect-ratio: 1.8 / 1; /* 压扁比例：宽/高 */
+    --cell-gap: 4px;            /* 色块间距 */
+    --cell-radius: 3px;         /* 色块圆角 */
+    --container-radius: 10px;    /* 背景容器圆角 */
+    --bg-gray: #f2f2f2;         /* 灰度背景 */
   }
 
   .mood-matrix-wrapper {
     background: var(--bg-gray);
-    padding: 20px 30px;
+    padding: 25px 0; /* 上下留白 */
     border-radius: var(--container-radius);
     margin: 30px auto;
     width: var(--wall-width);
-    height: var(--wall-height);
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid #eeeeee;
+    border: 1px solid #e5e5e5;
   }
 
+  /* 核心对齐逻辑：使用 fit-content 确保左右间距完全由 margin: auto 分配 */
   .matrix-container-with-axes {
     display: grid;
-    grid-template-columns: 35px 1fr;
-    grid-template-rows: 1fr 20px;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .y-axis, .x-axis {
-    font-size: 9px;
-    color: #bbb;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    grid-template-columns: auto auto; /* 纵轴和网格各占其位 */
+    gap: 12px;
+    width: fit-content; 
+    margin: 0 auto;
+    padding: 0 40px; /* 这里的 padding 决定了左右两端的呼吸感 */
   }
 
   .y-axis {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    font-size: 9px;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     text-align: right;
     padding: 2px 0;
-  }
-
-  .x-axis {
-    grid-column: 2;
-    display: flex;
-    justify-content: space-between;
   }
 
   .matrix-grid {
     display: grid;
     grid-template-rows: repeat(7, 1fr); 
     grid-auto-flow: column;
-    grid-auto-columns: 1fr;
+    grid-auto-columns: var(--cell-size); /* 固定宽度 */
     gap: var(--cell-gap);
-    width: 100%;
   }
 
   .cell {
+    width: var(--cell-size);
     aspect-ratio: var(--cell-aspect-ratio);
     border-radius: var(--cell-radius);
     background-color: var(--bg-color);
@@ -139,7 +130,7 @@ redirect_from:
 
   .cell:hover {
     filter: brightness(0.9);
-    transform: scale(1.1);
+    transform: scale(1.2);
     z-index: 10;
   }
 
@@ -149,22 +140,24 @@ redirect_from:
     background: #333;
     color: #fff;
     padding: 4px 8px;
-    border-radius: 3px;
+    border-radius: 2px;
     font-size: 9px;
-    bottom: 160%;
+    bottom: 180%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
+    z-index: 100;
   }
 
+  /* Academic Caption */
   .matrix-caption {
-    margin-top: 15px;
+    margin-top: 20px;
     font-size: 11px;
     color: #999;
-    width: 100%;
+    width: fit-content;
+    padding: 10px 40px 0 40px;
+    border-top: 1px solid #e8e8e8;
     text-align: left;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 10px;
   }
 </style>
 
@@ -180,26 +173,22 @@ redirect_from:
         {% if entry %}
           {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
           {% assign l = entry.m | times: 5 | plus: 20 %}
-          {% assign color = "hsl(" | append: h | append: ", 28%, " | append: l | append: "%)" %}
-          {% assign tip = "M" | append: entry.m | append: " A" | append: entry.a %}
+          {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
+          {% assign tip = "M" | append: entry.m | append: " / A" | append: entry.a %}
         {% else %}
-          {% assign color = "#ececec" %}
+          {% assign color = "#e0e0e0" %}
           {% assign tip = "N/A" %}
         {% endif %}
         <div class="cell" style="--bg-color: {{ color }};" data-tip="{{ tip }}"></div>
       {% endfor %}
     </div>
-
-    <div class="x-axis">
-      <span>W01</span><span>W04</span><span>W08</span><span>W13</span>
-    </div>
   </div>
 
   <div class="matrix-caption">
-    <b>Fig 1.</b> State manifold. Mood-Alcohol bivariate HSL mapping.
+    <b>Fig 1.</b> State manifold. Mood-Alcohol bivariate HSL mapping. 
+    Longitudinal observation of daily biological and psychological status.
   </div>
 </div>
-
 
 About this page
 ======
