@@ -70,10 +70,10 @@ redirect_from:
     /* --- 超参数调节面板 (Hyper-parameters) --- */
     --wall-width: 95%;          /* 墙占据页面的宽度百分比 */
     --wall-height: auto;        /* 墙的高度 */
-    --cell-aspect-ratio: 2 / 1; /* 压扁色块：2/1 代表宽度是高度的两倍 */
-    --cell-gap: 4px;            /* 色块之间的间距 */
-    --cell-radius: 4px;         /* 色块圆角 */
-    --container-radius: 12px;   /* 背景大容器圆角 */
+    --cell-aspect-ratio: 1 / 1; /* 压扁色块：2/1 代表宽度是高度的两倍 */
+    --cell-gap: 10px;            /* 色块之间的间距 */
+    --cell-radius: 5px;         /* 色块圆角 */
+    --container-radius: 20px;   /* 背景大容器圆角 */
     --bg-gray: #f8f9fa;         /* 背景底色 */
   }
 
