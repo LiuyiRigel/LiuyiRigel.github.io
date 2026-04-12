@@ -155,7 +155,7 @@ redirect_from:
           {% assign m = entry.m | plus: 0.0 %}
           {% assign a = entry.a | plus: 0.0 %}
           
-          {% comment %} 颜色算法逻辑重构：确保与 Scatter 背景流形一致 {% endcomment %}
+          {% comment %} 颜色算法修复：统一颜色逻辑 {% endcomment %}
           {% assign hue = a | minus: 1.0 | times: 11.25 | plus: 155.0 %}
           {% assign l_base = m | times: 11.0 %}
           {% assign l_sub = a | times: 7.0 %}
