@@ -67,55 +67,54 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 通用超参数 --- */
-    --wall-bg: #f4f6f8;
-    --empty-cell: #ffffff;
-    --axis-text-color: #888; /* 统一文字颜色 */
+    /* --- 超参数调节 --- */
+    --wall-bg: #f7f9fb;          /* 更清透的背景 */
+    --empty-cell: #ffffff;       /* 纯白空位 */
+    --text-gray: #78828e;        /* 标准学术灰文本 */
     
-    /* --- 绿墙超参数 --- */
-    --cell-w: 12px;
-    --cell-h: 9px;
+    /* 绿墙参数 */
+    --cell-w: 13px;
+    --cell-h: 10px;
     --gap: 3px;
-    --radius: 2px;
 
-    /* --- 二维坐标系超参数 --- */
-    --scatter-width: 450px;
-    --scatter-height: 300px;
-    --dot-size: 14px;
-    --dot-border-w: 2px;
-    --dot-border-col: rgba(255,255,255,0.8);
+    /* 坐标系参数 */
+    --scatter-w: 500px;      
+    --scatter-h: 300px;     
+    --dot-size: 14px;            
+    --dot-border-w: 2px;         
+    --dot-border-col: #ffffff;
   }
 
-  /* --- 整体容器 --- */
   .academic-dashboard-wrapper {
     background: var(--wall-bg);
-    padding: 30px 40px;
-    border-radius: 8px;
+    padding: 40px;
+    border-radius: 12px;
     margin: 40px auto;
     width: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
     border: 1px solid #e1e4e8;
-    font-family: -apple-system, system-ui, sans-serif;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    font-family: "Inter", -apple-system, system-ui, sans-serif;
   }
 
-  /* --- 绿墙部分 --- */
+  /* --- Wall 部分 --- */
   .matrix-main-container {
     display: grid;
-    grid-template-columns: 30px 1fr;
-    grid-template-rows: 20px 1fr;
-    gap: 4px;
-    margin-bottom: 30px;
+    grid-template-columns: 35px 1fr;
+    grid-template-rows: 25px 1fr;
+    gap: 6px;
+    margin-bottom: 50px;
   }
 
   .month-axis {
     grid-column: 2;
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
-    color: var(--axis-text-color);
-    padding-bottom: 5px;
+    font-size: 10px;
+    color: var(--text-gray);
+    letter-spacing: 0.05em;
   }
 
   .day-axis {
@@ -123,9 +122,8 @@ redirect_from:
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 9px;
-    color: var(--axis-text-color);
-    padding: 2px 0;
+    font-size: 10px;
+    color: var(--text-gray);
     height: calc(7 * var(--cell-h) + 6 * var(--gap));
   }
 
@@ -140,76 +138,49 @@ redirect_from:
   .cell {
     width: var(--cell-w);
     height: var(--cell-h);
-    border-radius: var(--radius);
+    border-radius: 1px;
     background-color: var(--bg-color);
-    transition: transform 0.2s;
-    border: 1px solid rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.02);
     position: relative;
+    transition: filter 0.2s;
   }
 
-  .cell:hover {
-    transform: scale(1.3);
-    z-index: 100;
-  }
-
-  .cell:hover::after {
-    content: attr(data-tip);
-    position: absolute;
-    background: rgba(33, 33, 33, 0.9);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 2px;
-    font-size: 9px;
-    bottom: 250%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    z-index: 1000;
-  }
-
-  /* --- 二维坐标系部分 --- */
+  /* --- Scatter 坐标系部分 --- */
   .scatter-plots-container {
-    width: var(--scatter-width);
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .scatter-title {
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    width: var(--scatter-w);
+    position: relative;
   }
 
   .scatter-frame {
-    width: var(--scatter-width);
-    height: var(--scatter-height);
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    width: var(--scatter-w);
+    height: var(--scatter-h);
+    border-left: 1px solid #d1d5da;
+    border-bottom: 1px solid #d1d5da;
     position: relative;
-    box-sizing: border-box;
-    /* 背景保持原有的渐变逻辑感 */
-    background: linear-gradient(135deg, hsl(310, 45%, 85%) 0%, hsl(210, 25%, 25%) 100%);
+    /* 梦幻渐变：从左下的暗青紫到右上的亮薄荷绿 */
+    background: linear-gradient(135deg, #3d4a5e 0%, #7da8a6 50%, #e0f2f1 100%);
+    overflow: visible;
   }
 
-  /* 坐标轴标签修正：移出内部，统一颜色，防止交叉 */
   .axis-label {
     position: absolute;
-    font-size: 10px;
-    color: var(--axis-text-color);
+    font-size: 11px;
+    color: var(--text-gray);
+    white-space: nowrap;
     font-weight: 500;
   }
 
-  .label-y-high { top: 0; left: -75px; width: 70px; text-align: right; }
-  .label-y-low  { bottom: 0; left: -75px; width: 70px; text-align: right; }
-  .label-x-high { bottom: -22px; right: 0; }
-  .label-x-low  { bottom: -22px; left: 0; }
+  .label-y { 
+    left: -50px; 
+    top: 50%; 
+    transform: translateY(-50%) rotate(-90deg); 
+  }
+  .label-x { 
+    bottom: -30px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+  }
 
-  /* 样本点归一化修正 */
   .data-dot {
     width: var(--dot-size);
     height: var(--dot-size);
@@ -217,45 +188,34 @@ redirect_from:
     border: var(--dot-border-w) solid var(--dot-border-col);
     background-color: var(--dot-color);
     position: absolute;
-    /* 修正：圆心精准定位 */
-    transform: translate(-50%, -50%); 
-    transition: all 0.2s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transform: translate(-50%, 50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     z-index: 10;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   .data-dot:hover {
-    transform: translate(-50%, -50%) scale(1.4);
+    transform: translate(-50%, 50%) scale(1.6);
     z-index: 100;
-    border-color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   }
 
-  .data-dot:hover::after {
+  /* --- Tooltip (Wall & Scatter 共享样式) --- */
+  .cell:hover::after, .data-dot:hover::after {
     content: attr(data-tip);
     position: absolute;
-    background: rgba(33, 33, 33, 0.95);
+    background: rgba(45, 55, 72, 0.95);
     color: #fff;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 10px;
-    line-height: 1.5;
-    bottom: 150%;
+    bottom: 180%;
     left: 50%;
     transform: translateX(-50%);
     white-space: pre-wrap;
     width: max-content;
     max-width: 200px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  }
-
-  .matrix-caption-final {
-    margin-top: 35px;
-    font-size: 11px;
-    color: #777;
-    border-top: 1px solid #ddd;
-    padding-top: 12px;
-    width: 100%;
+    z-index: 200;
   }
 </style>
 
@@ -269,70 +229,60 @@ redirect_from:
       <span>M</span><span>W</span><span>F</span><span>S</span>
     </div>
     <div class="matrix-grid-final">
-      {% assign seconds_per_day = 86400 %}
       {% assign current_year = "now" | date: "%Y" %}
       {% assign year_start = current_year | append: "-01-01" %}
-      
       {% for i in (0..364) %}
-        {% assign offset = i | times: seconds_per_day %}
-        {% assign day_ts = year_start | date: "%s" | plus: offset %}
-        {% assign date_str = day_ts | date: "%Y-%m-%d" %}
+        {% assign day_ts = i | times: 86400 | plus: 1735689600 %} {% assign date_str = day_ts | date: "%Y-%m-%d" %}
         {% assign dow = day_ts | date: "%u" %}
         {% assign entry = site.data.moods | where: "date", date_str | first %}
 
         {% if entry %}
-          {% comment %} 保持原有映射逻辑公式，但反转输入数值：使高分变亮 {% endcomment %}
-          {% assign m_rev = 6 | minus: entry.m %}
-          {% assign a_rev = 6 | minus: entry.a %}
-          {% assign h = a_rev | minus: 1 | times: 25 | plus: 200 %}
-          {% assign l = m_rev | times: 7 | plus: 45 %}
-          {% assign color = "hsl(" | append: h | append: ", 40%, " | append: l | append: "%)" %}
-          {% assign tip_wall = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
+          {% comment %} 
+            重构颜色映射逻辑：
+            H (Hue): 心情决定绿/青程度 (150-190)
+            S (Saturation): 固定低饱和 (35%)
+            L (Lightness): M 越高 L 越高(清醒)，A 越高 L 越低(梦幻/沉重)
+          {% endcomment %}
+          {% assign h = 150 | plus: entry.a | times: 8 %}
+          {% assign l = entry.m | times: 8 | minus: entry.a | times: 4 | plus: 40 %}
+          {% assign color = "hsl(" | append: h | append: ", 35%, " | append: l | append: "%)" %}
+          {% assign tip = date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
         {% else %}
           {% assign color = "var(--empty-cell)" %}
-          {% assign tip_wall = date_str %}
+          {% assign tip = date_str %}
         {% endif %}
-
-        <div class="cell" style="--bg-color: {{ color }}; grid-row: {{ dow }};" data-tip="{{ tip_wall }}"></div>
+        <div class="cell" style="--bg-color: {{ color }}; grid-row: {{ dow }};" data-tip="{{ tip }}"></div>
       {% endfor %}
     </div>
   </div>
 
   <div class="scatter-plots-container">
-    <div class="scatter-title">M-A Correlation Space</div>
+    <div class="axis-label label-y">Positive Mood</div>
+    <div class="axis-label label-x">Alcohol Consumption</div>
+    
     <div class="scatter-frame">
-      <div class="axis-label label-y-high">High Mood (5.0)</div>
-      <div class="axis-label label-y-low">Low Mood (1.0)</div>
-      <div class="axis-label label-x-high">High Alcohol (5.0)</div>
-      <div class="axis-label label-x-low">Clear (1.0)</div>
-
       {% for entry in site.data.moods %}
-        {% comment %} 坐标映射：1.0-5.0 -> 0%-100% {% endcomment %}
-        {% assign x_percent = entry.a | minus: 1.0 | divided_by: 4.0 | times: 100 %}
-        {% assign y_raw_percent = entry.m | minus: 1.0 | divided_by: 4.0 | times: 100 %}
-        {% assign y_percent = 100 | minus: y_raw_percent %}
+        {% comment %} 归一化修复 5%-95% 保护圆点不溢出 {% endcomment %}
+        {% assign x_pos = entry.a | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
+        {% assign y_raw = entry.m | minus: 1 | divided_by: 4.0 | times: 90 | plus: 5 %}
+        {% assign y_pos = 100 | minus: y_raw %}
 
-        {% comment %} 颜色逻辑同步 Wall 反转 {% endcomment %}
-        {% assign m_rev_dot = 6 | minus: entry.m %}
-        {% assign a_rev_dot = 6 | minus: entry.a %}
-        {% assign h_dot = a_rev_dot | minus: 1 | times: 25 | plus: 200 %}
-        {% assign l_dot = m_rev_dot | times: 7 | plus: 45 %}
-        {% assign color_dot = "hsl(" | append: h_dot | append: ", 40%, " | append: l_dot | append: "%)" %}
+        {% assign h_dot = 150 | plus: entry.a | times: 8 %}
+        {% assign l_dot = entry.m | times: 8 | minus: entry.a | times: 4 | plus: 40 %}
+        {% assign color_dot = "hsl(" | append: h_dot | append: ", 38%, " | append: l_dot | append: "%)" %}
 
-        {% capture tip_scatter %}{{ entry.date }} | M{{ entry.m }} A{{ entry.a }}{% if entry.note %} &#10;Note: {{ entry.note }}{% endif %}{% endcapture %}
+        {% capture tip_scat %}{{ entry.date }}&#10;M: {{ entry.m }} A: {{ entry.a }}{% if entry.note %}&#10;Note: {{ entry.note }}{% endif %}{% endcapture %}
 
         <div class="data-dot" 
-             style="--dot-color: {{ color_dot }}; left: {{ x_percent }}%; top: {{ y_percent }}%;" 
-             data-tip="{{ tip_scatter }}">
+             style="--dot-color: {{ color_dot }}; left: {{ x_pos }}%; top: {{ y_pos }}%;" 
+             data-tip="{{ tip_scat }}">
         </div>
       {% endfor %}
     </div>
   </div>
 
-  <div class="matrix-caption-final">
-    <b>Fig 1.</b> Bivariate Analysis of Daily States ({{ current_year }}). 
-    Colors preserve original HSL mapping with inverted logic: Higher <b>Mood</b> yields increased lightness; 
-    Higher <b>Alcohol</b> shifts hue. X-axis: Alcohol intake; Y-axis: Mood level.
+  <div class="matrix-caption-v3" style="margin-top: 30px; font-size: 11px; color: #999; text-align: left; width: 100%; border-top: 1px solid #eee; padding-top: 10px;">
+    <b>Fig 1.</b> Bivariate manifold of psychological state. <b>Lighter mint-green</b> indicates high-lucidity mood; <b>Deeper oceanic-teal</b> represents alcohol-induced dreaminess.
   </div>
 </div>
 
