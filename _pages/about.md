@@ -175,7 +175,7 @@ redirect_from:
     </div>
 
     <div class="day-axis">
-      <span>M</span><span>W</span><span>F</span><span>S</span>
+      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
     </div>
 
     <div class="matrix-grid-final">
