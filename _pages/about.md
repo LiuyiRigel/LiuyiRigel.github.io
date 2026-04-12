@@ -67,147 +67,157 @@ redirect_from:
 
 <style>
   :root {
-    /* --- 年度墙超参数 --- */
-    --wall-width: 100%;
-    --cell-aspect-ratio: 1.5 / 1; /* 季度分区建议比例 */
-    --cell-gap: 3px;
-    --quarter-gap: 15px;         /* 季度大区之间的间距 */
-    --bg-gray: #f2f2f2;
-    --q-label-color: #999;
+    /* --- (GitHub Style) --- */
+    --wall-width-container: 95%; /* 灰色背景框占页面的宽度 */
+    
+    /* 定义色块为长方形像素，固定大小 */
+    --cell-width: 13px;          
+    --cell-height: 10px;         
+    
+    --cell-gap: 4px;             /* 色块间距 */
+    --cell-radius: 2px;          /* 微圆角 */
+    --container-radius: 6px;     /* 大容器圆角 */
+    
+    /* 调淡底色，减轻厚重感 */
+    --bg-gray-lighter: #fbfbfb;  /* 沉静极浅灰 */
+    --empty-color: #f1f1f1;      /* N/A 色块调淡 */
   }
 
-  .year-matrix-wrapper {
-    background: var(--bg-gray);
-    padding: 35px 25px;
-    border-radius: 8px;
-    margin: 30px auto;
-    width: var(--wall-width);
-    box-sizing: border-box;
-    border: 1px solid #e5e5e5;
-  }
-
-  /* 季度分区大容器 */
-  .quarter-container {
-    display: flex;
-    gap: var(--quarter-gap);
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .quarter-section {
-    flex: 1; /* 每个季度等宽 */
+  .year-matrix-wrapper-v2 {
+    background: var(--bg-gray-lighter);
+    padding: 30px 0; /* 上下留白 */
+    border-radius: var(--container-radius);
+    margin: 40px auto;
+    width: var(--wall-width-container);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center; /* 居中内容 */
+    border: 1px solid #e5e5e5;
+    font-family: -apple-system, sans-serif;
   }
 
-  .q-label {
-    font-size: 10px;
-    color: var(--q-label-color);
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 4px;
-  }
-
-  .matrix-grid-q {
+  /* 坐标系容器：fit-content 确保左右完全对称 */
+  .matrix-container-with-axes-v2 {
     display: grid;
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: auto auto; 
+    gap: 12px;
+    width: fit-content; 
+    margin: 0 auto;
+    padding: 0 40px; /* 决定整体在容器内的呼吸感 */
+  }
+
+  .y-axis-v2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #bbb;
+    text-transform: uppercase;
+    text-align: right;
+    padding: 3px 0;
+    /* 动态匹配网格高度 */
+    height: calc(7 * var(--cell-height) + 6 * var(--cell-gap));
+  }
+
+  .matrix-grid-v2 {
+    display: grid;
+    grid-template-rows: repeat(7, var(--cell-height)); 
     grid-auto-flow: column;
-    grid-auto-columns: 1fr;
+    grid-auto-columns: var(--cell-width);
     gap: var(--cell-gap);
-    width: 100%;
   }
 
   .cell {
-    aspect-ratio: var(--cell-aspect-ratio);
-    border-radius: 1px;
-    transition: all 0.2s ease;
+    width: var(--cell-width);
+    height: var(--cell-height);
+    border-radius: var(--cell-radius);
+    background-color: var(--bg-color);
+    transition: all 0.2s ease-in-out;
     position: relative;
+    cursor: crosshair;
   }
 
+  /* 悬停微亮，不改变大小 */
   .cell:hover {
     filter: brightness(0.9);
-    transform: scale(1.2);
-    z-index: 10;
+    transform: scale(1.1);
+    z-index: 100;
   }
 
-  /* Tooltip */
+  /* Tooltip: 适配新比例 */
   .cell:hover::after {
     content: attr(data-tip);
     position: absolute;
-    background: #333;
+    background: rgba(50, 50, 50, 0.9);
     color: #fff;
     padding: 4px 8px;
     border-radius: 2px;
     font-size: 9px;
-    bottom: 160%;
+    bottom: 220%; /* 调高一点 */
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
-    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
 
-  .matrix-caption {
-    margin-top: 30px;
+  /* 精简学术图注 */
+  .matrix-caption-v2 {
+    margin-top: 25px;
     font-size: 11px;
-    color: #888;
-    border-top: 1px solid #e0e0e0;
-    padding-top: 12px;
+    color: #999;
+    width: fit-content;
+    padding: 10px 40px 0 40px;
+    border-top: 1px solid #e8e8e8;
+    text-align: left;
+    max-width: 85%;
   }
+
+  .matrix-caption-v2 b { color: #444; }
 </style>
 
-<div class="year-matrix-wrapper">
-  <div class="quarter-container">
-    {% assign seconds_per_day = 86400 %}
-    {% comment %} 计算当前年度第一天对应的周一（第一个有效周） {% endcomment %}
-    {% assign year_start_str = "now" | date: "%Y-01-01" %}
-    {% assign year_start_seconds = year_start_str | date: "%s" | plus: 0 %}
-    {% assign day_of_week_start = year_start_str | date: "%u" | minus: 1 %}
-    {% assign first_monday_offset = day_of_week_start | times: seconds_per_day %}
-    {% assign first_monday_seconds = year_start_seconds | minus: first_monday_offset %}
+<div class="year-matrix-wrapper-v2">
+  <div class="matrix-container-with-axes-v2">
+    <div class="y-axis-v2">
+      <span>M</span><span>W</span><span>F</span><span>S</span>
+    </div>
 
-    {% for q in (0..3) %}
-      <div class="quarter-section">
-        <div class="q-label">Quarter 0{{ q | plus: 1 }}</div>
-        <div class="matrix-grid-q">
-          {% assign days_per_quarter = 13 | times: 7 %}
-          {% assign q_offset_days = q | times: days_per_quarter %}
-          {% assign q_offset_seconds = q_offset_days | times: seconds_per_day %}
-          
-          {% for day_idx in (0..90) %} {% comment %} 每个季度 13 周共 91 天 {% endcomment %}
-            {% assign current_offset = day_idx | times: seconds_per_day | plus: q_offset_seconds %}
-            {% assign current_day_seconds = first_monday_seconds | plus: current_offset %}
-            {% assign current_date_str = current_day_seconds | date: "%Y-%m-%d" %}
-            {% assign current_day_of_week = current_day_seconds | date: "%u" %}
+    <div class="matrix-grid-v2">
+      {% assign seconds_per_day = 86400 %}
+      {% assign total_days = 91 %} {% assign end_date_seconds = "now" | date: "%s" | plus: 0 %}
+      
+      {% for i in (1..total_days) %}
+        {% assign offset_days = total_days | minus: i %}
+        {% assign offset_seconds = offset_days | times: seconds_per_day %}
+        {% assign current_day_seconds = end_date_seconds | minus: offset_seconds %}
+        
+        {% assign current_date_str = current_day_seconds | date: "%Y-%m-%d" %}
+        {% assign current_day_of_week = current_day_seconds | date: "%u" %}
 
-            {% assign entry = site.data.moods | where: "date", current_date_str | first %}
+        {% comment %} YML 检索 {% endcomment %}
+        {% assign entry = site.data.moods | where: "date", current_date_str | first %}
 
-            {% if entry %}
-              {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
-              {% assign l = entry.m | times: 5 | plus: 20 %}
-              {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
-              {% assign tip = current_date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
-            {% else %}
-              {% assign color = "#e8e8e8" %}
-              {% assign tip = current_date_str | append: " | N/A" %}
-            {% endif %}
+        {% if entry %}
+          {% comment %} HSL：A 控制色相(210-310), M 控制亮度(20-45) {% endcomment %}
+          {% assign h = entry.a | minus: 1 | times: 25 | plus: 210 %}
+          {% assign l = entry.m | times: 5 | plus: 20 %}
+          {% assign color = "hsl(" | append: h | append: ", 25%, " | append: l | append: "%)" %}
+          {% assign tip = current_date_str | append: " | M" | append: entry.m | append: " A" | append: entry.a %}
+        {% else %}
+          {% assign color = var(--empty-color) %}
+          {% assign tip = current_date_str | append: " | N/A" %}
+        {% endif %}
 
-            <div class="cell" 
-                 style="background-color: {{ color }}; grid-row: {{ current_day_of_week }};" 
-                 data-tip="{{ tip }}">
-            </div>
-          {% endfor %}
+        <div class="cell" 
+             style="background-color: {{ color }}; grid-row: {{ current_day_of_week }};" 
+             data-tip="{{ tip }}">
         </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
 
-  <div class="matrix-caption">
-    <b>Fig 1.</b> Annual manifold partitioned by fiscal quarters. 
-    Horizontal axis represents 52-week longitudinal observation. 
-    Grid alignment initiated from the first valid Monday of {{ "now" | date: "%Y" }}.
+  <div class="matrix-caption-v2">
+    <b>Fig 1.</b> Annual state manifold (Pixel-style). Mood (Lightness) and Alcohol (Hue) variables. 
+    Alignment by ISO day-of-week; N/A indicates null data points.
   </div>
 </div>
 
