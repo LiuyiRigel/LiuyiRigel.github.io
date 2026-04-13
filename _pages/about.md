@@ -69,12 +69,20 @@ redirect_from:
 <div class="mood-dashboard-embed-context">
   <style>
     :root {
+      /* 基础变量 */
       --wall-bg: #f8fafc;
       --text-gray: #718096;
       --empty-cell: #ffffff;
-      --cell-w: 14px; --cell-h: 11px; --gap: 3px;
-      --scatter-w: 600px; --scatter-h: 350px;
+      --cell-w: 14px; 
+      --cell-h: 11px; 
+      --gap: 3px;
+      --scatter-w: 600px; 
+      --scatter-h: 350px;
       --dot-size: 14px;
+      
+      /* 动画曲线 */
+      --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-out-expo: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .mood-dashboard-embed-context {
@@ -82,34 +90,43 @@ redirect_from:
       padding: 50px 40px; 
       border-radius: 16px;
       margin: 20px auto; 
-      width: 95%; max-width: 900px;
-      display: flex; flex-direction: column; align-items: center;
+      width: 95%; 
+      max-width: 900px;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center;
       border: 1px solid #e2e8f0; 
-      font-family: -apple-system, system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       box-sizing: border-box;
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
 
-    /* --- Wall 布局：自适应不滚动 --- */
+    /* --- 1. Wall Chart 布局 --- */
     .matrix-wrapper {
       display: grid; 
       grid-template-columns: auto 1fr; 
       grid-template-rows: 25px 1fr; 
-      column-gap: 12px; row-gap: 8px;
+      column-gap: 12px; 
+      row-gap: 8px;
       margin-bottom: 60px;
       width: 100%;
     }
 
     .month-labels { 
       grid-column: 2; 
-      display: flex; justify-content: space-between;
-      font-size: 10px; color: var(--text-gray); 
+      display: flex; 
+      justify-content: space-between;
+      font-size: 10px; 
+      color: var(--text-gray); 
     }
 
     .day-labels { 
       grid-row: 2; 
-      display: flex; flex-direction: column; justify-content: space-between; 
-      font-size: 10px; color: var(--text-gray); 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      font-size: 10px; 
+      color: var(--text-gray); 
       height: calc(var(--cell-h) * 7 + var(--gap) * 6);
     }
 
@@ -121,37 +138,60 @@ redirect_from:
       width: 100%;
     }
 
+    /* --- 2. 交互与动画核心 (优雅优化版) --- */
+    .cell, .dot {
+      transition: 
+        transform 0.4s var(--ease-out-back),
+        box-shadow 0.3s ease,
+        filter 0.3s ease;
+      will-change: transform;
+      cursor: pointer;
+      position: relative;
+    }
+
     .cell { 
-      width: 100%; /* 关键：自适应宽度 */
-      min-width: 2px;
+      width: 100%; 
       max-width: var(--cell-w);
       height: var(--cell-h); 
       border-radius: 2px; 
       background: var(--empty-cell); 
       border: 1px solid rgba(0,0,0,0.02); 
-      position: relative; 
-      transition: all 0.2s ease;
-      cursor: crosshair;
     }
-    .cell:hover { transform: scale(1.6); z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-    /* --- Scatter 布局：修复交互优先级 --- */
+    .cell:hover { 
+      transform: scale(1.6); 
+      z-index: 100; 
+      filter: brightness(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+    }
+
+    /* --- 3. Scatter Plot 布局 --- */
     .scatter-plots { 
-      width: 100%; max-width: var(--scatter-w);
-      position: relative; margin-top: 20px; 
+      width: 100%; 
+      max-width: var(--scatter-w);
+      position: relative; 
+      margin-top: 20px; 
     }
 
     .scatter-canvas {
-      width: 100%; height: var(--scatter-h);
-      border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
-      position: relative; overflow: visible;
+      width: 100%; 
+      height: var(--scatter-h);
+      border-left: 2px solid #cbd5e1; 
+      border-bottom: 2px solid #cbd5e1;
+      position: relative; 
+      overflow: visible;
       background: linear-gradient(to bottom right, #5eead4 0%, #334155 65%, #1e293b 100%);
       border-radius: 0 0 0 4px;
     }
 
     .axis-title { 
-      position: absolute; font-size: 11px; color: var(--text-gray); 
-      font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      position: absolute; 
+      font-size: 11px; 
+      color: var(--text-gray); 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+      white-space: nowrap;
     }
     .title-y { left: -90px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
     .title-x { bottom: -50px; left: 50%; transform: translateX(-50%); }
@@ -160,52 +200,65 @@ redirect_from:
     .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
     .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
 
-    /* 修复：样本点悬停浮动与优先级 */
     .dot {
       width: var(--dot-size); height: var(--dot-size); 
-      border-radius: 50%; border: 2px solid #ffffff;
+      border-radius: 50%; 
+      border: 2px solid #ffffff;
       position: absolute; 
       transform: translate(-50%, -50%); 
       z-index: 10;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      cursor: pointer;
     }
     
     .dot:hover { 
       transform: translate(-50%, -50%) scale(1.8); 
-      z-index: 500; /* 极高优先级 */
-      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
-      filter: brightness(1.1);
+      z-index: 500; 
+      filter: brightness(1.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
 
-    /* 统一 Tooltip 样式与优先级修复 */
-    [data-tip] { position: relative; }
+    /* --- 4. Tooltip 优雅弹出逻辑 (修复闪烁与优先级) --- */
     [data-tip]::after {
       content: attr(data-tip); 
       position: absolute; 
-      background: rgba(15, 23, 42, 0.9); 
-      -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+      bottom: 240%; /* 拉开距离防止鼠标触碰产生闪烁循环 */
+      left: 50%;
+      
+      /* 初始动画状态 */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(10px) scale(0.8);
+      
+      /* 样式设计 */
+      background: rgba(15, 23, 42, 0.95); 
+      -webkit-backdrop-filter: blur(6px); 
+      backdrop-filter: blur(6px);
       color: #fff;
       padding: 10px 14px; 
       border-radius: 8px; 
-      font-size: 11px; line-height: 1.5;
-      bottom: 180%; left: 50%;
-      transform: translateX(-50%) scale(0.8); 
+      font-size: 11px; 
+      line-height: 1.5;
       white-space: pre-wrap;
-      z-index: 1000; /* 全局最高 */
-      pointer-events: none;
+      z-index: 1000; 
+      pointer-events: none; /* 彻底解决闪烁的核心：Tooltip 不响应鼠标 */
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-      opacity: 0;
-      transition: all 0.2s ease;
-      width: max-content; max-width: 220px;
-    }
-    [data-tip]:hover::after {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
+      width: max-content; 
+      max-width: 220px;
+      text-align: left;
+      
+      transition: 
+        opacity 0.25s var(--ease-out-expo),
+        transform 0.3s var(--ease-out-expo),
+        visibility 0.25s;
     }
 
-    /* --- 移动端策略：纵向适配与比例调整 --- */
+    [data-tip]:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* --- 5. 移动端响应式适配 --- */
     @media (max-width: 768px) {
       .mood-dashboard-embed-context { padding: 30px 20px; }
       :root {
@@ -216,7 +269,10 @@ redirect_from:
       .matrix-wrapper { column-gap: 6px; }
       .title-y { left: -75px; font-size: 9px; }
       .title-x { bottom: -40px; font-size: 9px; }
-      .day-labels span:nth-child(even) { display: none; } /* 手机端隐藏部分星期标签节省空间 */
+      .day-labels span:nth-child(even) { display: none; } /* 减少侧边负担 */
+      
+      /* 移动端点击取消高亮蓝框 */
+      .cell, .dot { -webkit-tap-highlight-color: transparent; }
     }
   </style>
 
@@ -242,9 +298,10 @@ redirect_from:
           {% assign l_p2 = a_f | times: 7.0 %}
           {% assign lit = l_p1 | minus: l_p2 | plus: 30.0 %}
           {% assign color = "hsl(" | append: hue | append: ", 45%, " | append: lit | append: "%)" %}
-          <div class="cell" style="background-color: {{ color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ entry.m }} Alcohol: {{ entry.a }}"></div>
+          <div class="cell" style="background-color: {{ color }}; grid-row: {{ d_ow }};" 
+               data-tip="{{ d_str }}&#10;Mood: {{ entry.m }} Alcohol: {{ entry.a }}{% if entry.note %}&#10;Note: {{ entry.note }}{% endif %}"></div>
         {% else %}
-          <div class="cell" style="grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: N/A Alcohol: N/A"></div>
+          <div class="cell" style="grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;No Data"></div>
         {% endif %}
       {% endfor %}
     </div>
@@ -260,6 +317,8 @@ redirect_from:
       {% for item in site.data.moods %}
         {% assign m_val = item.m | plus: 0.0 %}
         {% assign a_val = item.a | plus: 0.0 %}
+        
+        {% comment %} 坐标计算逻辑：5是原点，正向为1 {% endcomment %}
         {% assign x = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y = 100.0 | minus: y_raw %}
