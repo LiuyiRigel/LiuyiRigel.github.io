@@ -67,7 +67,11 @@
       gap: var(--gap);
       width: 100%;
       /* 确保网格容器不剪切悬停阴影 */
-      overflow: visible; 
+      overflow: visible;
+      /* 防止堆叠上下文干扰悬停元素显示 */
+      isolation: isolate;
+      position: relative;
+      z-index: 1;
     }
 
     /* --- 交互修复：消除闪烁与交互冲突 --- */
@@ -94,11 +98,11 @@
 
     .cell:hover { 
       transform: scale(1.6); 
-      /* 修复点 1：瞬间提升层级并使用 outline 确保阴影渲染优先级 */
-      z-index: 50; 
+      /* 修复点 1：瞬间提升层级确保阴影正确显示不被闪烁 */
+      z-index: 100; 
       filter: brightness(1.05);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.18); 
-      outline: 1px solid transparent; 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25); 
+      outline: 2px solid transparent; 
     }
 
     /* --- Scatter Plot 布局 --- */
@@ -129,7 +133,7 @@
       white-space: nowrap;
     }
     .title-y { left: -90px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
-    .title-x { bottom: -50px; left: 50%; transform: translateX(-50%); }
+    .title-x { bottom: -68px; left: 50%; transform: translateX(-50%); }
     
     .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; font-family: monospace; }
     .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
