@@ -1,20 +1,17 @@
 # Mood (m): 1.0 (Low/Blue) to 5.0 (High/Bright)
 # Alcohol (a): 1.0 (Clear) to 5.0 (Purple/Deep)
 
-- date: 2026-04-13
-  m: 2.5
-  a: 2.0
-  note: "Tired."
-
-- date: 2026-04-12
-  m: 1.0
-  a: 1.0
-  note: "Soo Fxcking tired."
-
 - date: 2026-04-11
   m: 3.0
   a: 2.1
   note: "Watch film/ Sicario,maybe 9.3/10."
 
+- date: 2026-04-12
+  m: 1.2
+  a: 1
+  note: "Soo Fxcking tired."
 
-
+- date: 2026-04-13
+  m: 2.2
+  a: 2.0
+  note: "Tired."
