@@ -69,7 +69,6 @@ redirect_from:
 <div class="mood-dashboard-embed-context">
   <style>
     :root {
-      /* 基础变量 */
       --wall-bg: #f8fafc;
       --text-gray: #718096;
       --empty-cell: #ffffff;
@@ -79,15 +78,13 @@ redirect_from:
       --scatter-w: 600px; 
       --scatter-h: 350px;
       --dot-size: 14px;
-      
-      /* 动画曲线 */
       --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
       --ease-out-expo: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .mood-dashboard-embed-context {
       background: var(--wall-bg); 
-      padding: 50px 40px; 
+      padding: 45px 40px; 
       border-radius: 16px;
       margin: 20px auto; 
       width: 95%; 
@@ -101,14 +98,15 @@ redirect_from:
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
 
-    /* --- 1. Wall Chart 布局 --- */
+    /* --- Wall 布局优化 --- */
     .matrix-wrapper {
       display: grid; 
       grid-template-columns: auto 1fr; 
       grid-template-rows: 25px 1fr; 
       column-gap: 12px; 
       row-gap: 8px;
-      margin-bottom: 60px;
+      /* 修复点 2：缩短与坐标系的垂直距离 */
+      margin-bottom: 35px; 
       width: 100%;
     }
 
@@ -136,9 +134,11 @@ redirect_from:
       grid-auto-flow: column; 
       gap: var(--gap);
       width: 100%;
+      /* 确保网格容器不剪切悬停阴影 */
+      overflow: visible; 
     }
 
-    /* --- 2. 交互与动画核心 (优雅优化版) --- */
+    /* --- 交互修复：消除闪烁与交互冲突 --- */
     .cell, .dot {
       transition: 
         transform 0.4s var(--ease-out-back),
@@ -147,6 +147,8 @@ redirect_from:
       will-change: transform;
       cursor: pointer;
       position: relative;
+      /* 基础层级，防止背景覆盖阴影 */
+      z-index: 1; 
     }
 
     .cell { 
@@ -160,17 +162,18 @@ redirect_from:
 
     .cell:hover { 
       transform: scale(1.6); 
-      z-index: 100; 
-      filter: brightness(1.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+      /* 修复点 1：瞬间提升层级并使用 outline 确保阴影渲染优先级 */
+      z-index: 50; 
+      filter: brightness(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.18); 
+      outline: 1px solid transparent; 
     }
 
-    /* --- 3. Scatter Plot 布局 --- */
+    /* --- Scatter Plot 布局 --- */
     .scatter-plots { 
       width: 100%; 
       max-width: var(--scatter-w);
       position: relative; 
-      margin-top: 20px; 
     }
 
     .scatter-canvas {
@@ -213,23 +216,19 @@ redirect_from:
     .dot:hover { 
       transform: translate(-50%, -50%) scale(1.8); 
       z-index: 500; 
-      filter: brightness(1.15);
+      filter: brightness(1.1);
       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
 
-    /* --- 4. Tooltip 优雅弹出逻辑 (修复闪烁与优先级) --- */
+    /* --- Tooltip 动画修复 --- */
     [data-tip]::after {
       content: attr(data-tip); 
       position: absolute; 
-      bottom: 240%; /* 拉开距离防止鼠标触碰产生闪烁循环 */
+      bottom: 260%; 
       left: 50%;
-      
-      /* 初始动画状态 */
       opacity: 0;
       visibility: hidden;
-      transform: translateX(-50%) translateY(10px) scale(0.8);
-      
-      /* 样式设计 */
+      transform: translateX(-50%) translateY(8px) scale(0.9);
       background: rgba(15, 23, 42, 0.95); 
       -webkit-backdrop-filter: blur(6px); 
       backdrop-filter: blur(6px);
@@ -239,13 +238,11 @@ redirect_from:
       font-size: 11px; 
       line-height: 1.5;
       white-space: pre-wrap;
-      z-index: 1000; 
-      pointer-events: none; /* 彻底解决闪烁的核心：Tooltip 不响应鼠标 */
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      z-index: 2000; 
+      pointer-events: none; 
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
       width: max-content; 
       max-width: 220px;
-      text-align: left;
-      
       transition: 
         opacity 0.25s var(--ease-out-expo),
         transform 0.3s var(--ease-out-expo),
@@ -258,7 +255,6 @@ redirect_from:
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    /* --- 5. 移动端响应式适配 --- */
     @media (max-width: 768px) {
       .mood-dashboard-embed-context { padding: 30px 20px; }
       :root {
@@ -266,13 +262,9 @@ redirect_from:
         --scatter-h: 280px;
         --dot-size: 12px;
       }
-      .matrix-wrapper { column-gap: 6px; }
+      .matrix-wrapper { margin-bottom: 25px; }
       .title-y { left: -75px; font-size: 9px; }
       .title-x { bottom: -40px; font-size: 9px; }
-      .day-labels span:nth-child(even) { display: none; } /* 减少侧边负担 */
-      
-      /* 移动端点击取消高亮蓝框 */
-      .cell, .dot { -webkit-tap-highlight-color: transparent; }
     }
   </style>
 
@@ -317,8 +309,6 @@ redirect_from:
       {% for item in site.data.moods %}
         {% assign m_val = item.m | plus: 0.0 %}
         {% assign a_val = item.a | plus: 0.0 %}
-        
-        {% comment %} 坐标计算逻辑：5是原点，正向为1 {% endcomment %}
         {% assign x = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
         {% assign y = 100.0 | minus: y_raw %}
@@ -331,10 +321,7 @@ redirect_from:
 
         {% capture scatter_tip %}{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}{% endcapture %}
 
-        <div class="dot" 
-             style="background-color: {{ c_dot }}; left: {{ x }}%; top: {{ y }}%;" 
-             data-tip="{{ scatter_tip }}">
-        </div>
+        <div class="dot" style="background-color: {{ c_dot }}; left: {{ x }}%; top: {{ y }}%;" data-tip="{{ scatter_tip }}"></div>
       {% endfor %}
     </div>
   </div>
