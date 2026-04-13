@@ -72,185 +72,187 @@ redirect_from:
       --wall-bg: #f8fafc;
       --text-gray: #718096;
       --empty-cell: #ffffff;
-      --cell-w: 15px; 
-      --cell-h: 12px; 
-      --gap: 3px;
-      --scatter-w: 600px; 
-      --scatter-h: 350px;
-      --dot-size: 16px;
+      --cell-w: 14px; --cell-h: 11px; --gap: 3px;
+      --scatter-w: 600px; --scatter-h: 350px;
+      --dot-size: 14px;
     }
+
     .mood-dashboard-embed-context {
       background: var(--wall-bg); 
-      padding: 40px 20px; 
-      border-radius: 12px;
-      margin: 10px auto; 
-      width: 95%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: column; 
-      align-items: center;
+      padding: 50px 40px; 
+      border-radius: 16px;
+      margin: 20px auto; 
+      width: 95%; max-width: 900px;
+      display: flex; flex-direction: column; align-items: center;
       border: 1px solid #e2e8f0; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, system-ui, sans-serif;
       box-sizing: border-box;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
-    /* --- Wall 布局响应式 --- */
-    .matrix-container {
-      width: 100%;
-      overflow-x: auto; /* 手机端支持横向滑动 */
-      padding-bottom: 20px;
-      display: flex;
-      justify-content: center;
-    }
+
+    /* --- Wall 布局：自适应不滚动 --- */
     .matrix-wrapper {
       display: grid; 
       grid-template-columns: auto 1fr; 
-      grid-template-rows: 20px 1fr; 
-      column-gap: 12px; 
-      row-gap: 8px;
-      margin-bottom: 40px;
-      min-width: min-content; /* 保证内部网格不挤压 */
+      grid-template-rows: 25px 1fr; 
+      column-gap: 12px; row-gap: 8px;
+      margin-bottom: 60px;
+      width: 100%;
     }
+
     .month-labels { 
       grid-column: 2; 
-      display: grid;
-      grid-template-columns: repeat(12, calc((var(--cell-w) + var(--gap)) * 4.34));
-      font-size: 10px; 
-      color: var(--text-gray); 
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: var(--text-gray); 
     }
+
     .day-labels { 
       grid-row: 2; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: space-between; 
-      font-size: 10px; 
-      color: var(--text-gray); 
+      display: flex; flex-direction: column; justify-content: space-between; 
+      font-size: 10px; color: var(--text-gray); 
       height: calc(var(--cell-h) * 7 + var(--gap) * 6);
-      padding-top: 2px;
     }
+
     .matrix-grid { 
       display: grid; 
       grid-template-rows: repeat(7, var(--cell-h)); 
       grid-auto-flow: column; 
-      gap: var(--gap); 
+      gap: var(--gap);
+      width: 100%;
     }
+
     .cell { 
-      width: var(--cell-w); 
+      width: 100%; /* 关键：自适应宽度 */
+      min-width: 2px;
+      max-width: var(--cell-w);
       height: var(--cell-h); 
       border-radius: 2px; 
       background: var(--empty-cell); 
-      border: 1px solid rgba(0,0,0,0.03); 
+      border: 1px solid rgba(0,0,0,0.02); 
       position: relative; 
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.2s ease;
+      cursor: crosshair;
     }
-    .cell:hover { transform: scale(1.6); z-index: 50; filter: brightness(1.05); }
-    /* --- Scatter 布局响应式 --- */
+    .cell:hover { transform: scale(1.6); z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+    /* --- Scatter 布局：修复交互优先级 --- */
     .scatter-plots { 
-      width: 100%; 
-      max-width: var(--scatter-w);
-      position: relative; 
-      margin-top: 20px; 
+      width: 100%; max-width: var(--scatter-w);
+      position: relative; margin-top: 20px; 
     }
+
     .scatter-canvas {
-      width: 100%; 
-      height: var(--scatter-h);
-      border-left: 2px solid #cbd5e1; 
-      border-bottom: 2px solid #cbd5e1;
-      position: relative; 
-      overflow: visible;
+      width: 100%; height: var(--scatter-h);
+      border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
+      position: relative; overflow: visible;
       background: linear-gradient(to bottom right, #5eead4 0%, #334155 65%, #1e293b 100%);
+      border-radius: 0 0 0 4px;
     }
+
     .axis-title { 
-      position: absolute; 
-      font-size: 11px; 
-      color: var(--text-gray); 
-      font-weight: 600; 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px;
-      white-space: nowrap; 
+      position: absolute; font-size: 11px; color: var(--text-gray); 
+      font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
     }
-    .title-y { left: -45px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
-    .title-x { bottom: -45px; left: 50%; transform: translateX(-50%); }
-    .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; }
+    .title-y { left: -90px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
+    .title-x { bottom: -50px; left: 50%; transform: translateX(-50%); }
+    
+    .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; font-family: monospace; }
     .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
     .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
+
+    /* 修复：样本点悬停浮动与优先级 */
     .dot {
       width: var(--dot-size); height: var(--dot-size); 
       border-radius: 50%; border: 2px solid #ffffff;
       position: absolute; 
       transform: translate(-50%, -50%); 
       z-index: 10;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2); 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
     }
-    /* --- 移动端媒体查询 (手机) --- */
-    @media (max-width: 600px) {
-      :root {
-        --cell-w: 11px; /* 缩小一点以适配窄屏不溢出太多 */
-        --cell-h: 9px;
-        --scatter-h: 220px; /* 降低散点图高度 */
-        --dot-size: 12px;
-      }
-      .mood-dashboard-embed-context { padding: 30px 15px; }
-      .title-y { left: -55px; font-size: 9px; }
-      .title-x { bottom: -40px; font-size: 9px; }
-      .axis-tick { font-size: 9px; }
+    
+    .dot:hover { 
+      transform: translate(-50%, -50%) scale(1.8); 
+      z-index: 500; /* 极高优先级 */
+      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+      filter: brightness(1.1);
     }
-    /* Tooltip 通用样式 */
-    .cell:hover::after, .dot:hover::after {
+
+    /* 统一 Tooltip 样式与优先级修复 */
+    [data-tip] { position: relative; }
+    [data-tip]::after {
       content: attr(data-tip); 
       position: absolute; 
-      background: rgba(26, 32, 44, 0.95); 
+      background: rgba(15, 23, 42, 0.9); 
+      -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
       color: #fff;
-      padding: 8px 12px; 
-      border-radius: 6px; 
-      font-size: 11px; 
-      line-height: 1.4;
-      bottom: 220%; 
-      left: 50%;
-      transform: translateX(-50%); 
+      padding: 10px 14px; 
+      border-radius: 8px; 
+      font-size: 11px; line-height: 1.5;
+      bottom: 180%; left: 50%;
+      transform: translateX(-50%) scale(0.8); 
       white-space: pre-wrap;
-      z-index: 200; 
+      z-index: 1000; /* 全局最高 */
       pointer-events: none;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-      width: max-content;
-      max-width: 180px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.2s ease;
+      width: max-content; max-width: 220px;
+    }
+    [data-tip]:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* --- 移动端策略：纵向适配与比例调整 --- */
+    @media (max-width: 768px) {
+      .mood-dashboard-embed-context { padding: 30px 20px; }
+      :root {
+        --cell-h: 8px;
+        --scatter-h: 280px;
+        --dot-size: 12px;
+      }
+      .matrix-wrapper { column-gap: 6px; }
+      .title-y { left: -75px; font-size: 9px; }
+      .title-x { bottom: -40px; font-size: 9px; }
+      .day-labels span:nth-child(even) { display: none; } /* 手机端隐藏部分星期标签节省空间 */
     }
   </style>
 
-  <div class="matrix-container">
-    <div class="matrix-wrapper">
-      <div class="month-labels">
-        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-        <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-      </div>
-      <div class="day-labels"><span>M</span><span>W</span><span>F</span><span>S</span></div>
-      <div class="matrix-grid">
-        {% assign start_ts = "2026-01-01" | date: "%s" | plus: 0 %}
-        {% for i in (0..364) %}
-          {% assign d_ts = i | times: 86400 | plus: start_ts %}
-          {% assign d_str = d_ts | date: "%Y-%m-%d" %}
-          {% assign d_ow = d_ts | date: "%u" %}
-          {% assign entry = site.data.moods | where: "date", d_str | first %}
+  <div class="matrix-wrapper">
+    <div class="month-labels">
+      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+      <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+    </div>
+    <div class="day-labels"><span>M</span><span>W</span><span>F</span><span>S</span></div>
+    <div class="matrix-grid">
+      {% assign start_ts = "2026-01-01" | date: "%s" | plus: 0 %}
+      {% for i in (0..364) %}
+        {% assign d_ts = i | times: 86400 | plus: start_ts %}
+        {% assign d_str = d_ts | date: "%Y-%m-%d" %}
+        {% assign d_ow = d_ts | date: "%u" %}
+        {% assign entry = site.data.moods | where: "date", d_str | first %}
 
-          {% if entry %}
-            {% assign m_f = entry.m | plus: 0.0 %}
-            {% assign a_f = entry.a | plus: 0.0 %}
-            {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
-            {% assign l_p1 = m_f | times: 11.0 %}
-            {% assign l_p2 = a_f | times: 7.0 %}
-            {% assign lit = l_p1 | minus: l_p2 | plus: 30.0 %}
-            {% assign color = "hsl(" | append: hue | append: ", 40%, " | append: lit | append: "%)" %}
-            <div class="cell" style="background-color: {{ color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ entry.m }} Alcohol: {{ entry.a }}"></div>
-          {% else %}
-            <div class="cell" style="grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: N/A Alcohol: N/A"></div>
-          {% endif %}
-        {% endfor %}
-      </div>
+        {% if entry %}
+          {% assign m_f = entry.m | plus: 0.0 %}
+          {% assign a_f = entry.a | plus: 0.0 %}
+          {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+          {% assign l_p1 = m_f | times: 11.0 %}
+          {% assign l_p2 = a_f | times: 7.0 %}
+          {% assign lit = l_p1 | minus: l_p2 | plus: 30.0 %}
+          {% assign color = "hsl(" | append: hue | append: ", 45%, " | append: lit | append: "%)" %}
+          <div class="cell" style="background-color: {{ color }}; grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: {{ entry.m }} Alcohol: {{ entry.a }}"></div>
+        {% else %}
+          <div class="cell" style="grid-row: {{ d_ow }};" data-tip="{{ d_str }}&#10;Mood: N/A Alcohol: N/A"></div>
+        {% endif %}
+      {% endfor %}
     </div>
   </div>
 
   <div class="scatter-plots">
-    <div class="axis-title title-y">Mood</div>
-    <div class="axis-title title-x">Alcohol</div>
+    <div class="axis-title title-y">Positive Mood</div>
+    <div class="axis-title title-x">Alcohol Consumption</div>
     <div class="axis-tick tick-y1">1.0</div><div class="axis-tick tick-y5">5.0</div>
     <div class="axis-tick tick-x1">1.0</div><div class="axis-tick tick-x5">5.0</div>
 
@@ -266,7 +268,7 @@ redirect_from:
         {% assign l_d1 = m_val | times: 11.0 %}
         {% assign l_d2 = a_val | times: 7.0 %}
         {% assign l_dot = l_d1 | minus: l_d2 | plus: 30.0 %}
-        {% assign c_dot = "hsl(" | append: h_dot | append: ", 42%, " | append: l_dot | append: "%)" %}
+        {% assign c_dot = "hsl(" | append: h_dot | append: ", 50%, " | append: l_dot | append: "%)" %}
 
         {% capture scatter_tip %}{{ item.date }}&#10;M: {{ item.m }} A: {{ item.a }}{% if item.note %}&#10;Note: {{ item.note }}{% endif %}{% endcapture %}
 
@@ -278,7 +280,6 @@ redirect_from:
     </div>
   </div>
 </div>
-
 
 
 About this page
