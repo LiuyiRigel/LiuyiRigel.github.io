@@ -16,7 +16,7 @@
 
     .mood-dashboard-embed-context {
       background: var(--wall-bg); 
-      padding: 50px 50px 50px 80px;
+      padding: 45px 40px; 
       border-radius: 16px;
       margin: 20px auto; 
       width: 95%; 
@@ -27,14 +27,7 @@
       border: 1px solid #e2e8f0; 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       box-sizing: border-box;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      transition: box-shadow 0.3s ease;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .mood-dashboard-embed-context:hover {
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
 
     /* --- Wall 布局优化 --- */
@@ -42,12 +35,11 @@
       display: grid; 
       grid-template-columns: auto 1fr; 
       grid-template-rows: 25px 1fr; 
-      column-gap: 16px; 
-      row-gap: 12px;
-      margin-bottom: 60px;
+      column-gap: 12px; 
+      row-gap: 8px;
+      /* 修复点 2：缩短与坐标系的垂直距离 */
+      margin-bottom: 35px; 
       width: 100%;
-      position: relative;
-      overflow: visible;
     }
 
     .month-labels { 
@@ -74,12 +66,8 @@
       grid-auto-flow: column; 
       gap: var(--gap);
       width: 100%;
-      /* 确保网格容器不剪切悬停阴影,添加视觉缓冲 */
-      overflow: visible;
-      padding: 12px 0;
-      position: relative;
-      /* 防止内容超出容器 */
-      max-width: 100%;
+      /* 确保网格容器不剪切悬停阴影 */
+      overflow: visible; 
     }
 
     /* --- 交互修复：消除闪烁与交互冲突 --- */
@@ -105,21 +93,19 @@
     }
 
     .cell:hover { 
-      transform: scale(1.5); 
+      transform: scale(1.6); 
+      /* 修复点 1：瞬间提升层级并使用 outline 确保阴影渲染优先级 */
       z-index: 50; 
-      filter: brightness(1.08) saturate(1.05);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.15); 
-      outline: 2px solid transparent; 
+      filter: brightness(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.18); 
+      outline: 1px solid transparent; 
     }
 
     /* --- Scatter Plot 布局 --- */
     .scatter-plots { 
       width: 100%; 
       max-width: var(--scatter-w);
-      position: relative;
-      /* 为坐标轴标签预留空间 */
-      margin-left: 0;
-      padding-left: 0;
+      position: relative; 
     }
 
     .scatter-canvas {
@@ -128,15 +114,9 @@
       border-left: 2px solid #cbd5e1; 
       border-bottom: 2px solid #cbd5e1;
       position: relative; 
-      /* 允许悬停元素超出边界 */
       overflow: visible;
-      background: linear-gradient(to bottom right, rgba(94, 234, 212, 0.08) 0%, rgba(51, 65, 85, 0.04) 65%, rgba(30, 41, 59, 0.02) 100%);
+      background: linear-gradient(to bottom right, #5eead4 0%, #334155 65%, #1e293b 100%);
       border-radius: 0 0 0 4px;
-      transition: background 0.3s ease;
-    }
-
-    .scatter-canvas:hover {
-      background: linear-gradient(to bottom right, rgba(94, 234, 212, 0.12) 0%, rgba(51, 65, 85, 0.06) 65%, rgba(30, 41, 59, 0.03) 100%);
     }
 
     .axis-title { 
@@ -147,26 +127,9 @@
       text-transform: uppercase; 
       letter-spacing: 1px;
       white-space: nowrap;
-      transition: color 0.3s ease;
     }
-    .title-y { 
-      left: -82px; 
-      top: 50%; 
-      transform: translateY(-50%) rotate(-90deg); 
-      width: auto;
-      text-align: center;
-      transform-origin: center;
-    }
-    .title-x { 
-      bottom: -50px; 
-      left: 50%; 
-      transform: translateX(-50%); 
-      text-align: center;
-    }
-    
-    .scatter-plots:hover .axis-title {
-      color: #475569;
-    }
+    .title-y { left: -90px; top: 50%; transform: translateY(-50%) rotate(-90deg); width: 120px; text-align: center; }
+    .title-x { bottom: -50px; left: 50%; transform: translateX(-50%); }
     
     .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; font-family: monospace; }
     .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
@@ -179,14 +142,14 @@
       position: absolute; 
       transform: translate(-50%, -50%); 
       z-index: 10;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
     }
     
     .dot:hover { 
-      transform: translate(-50%, -50%) scale(1.7); 
+      transform: translate(-50%, -50%) scale(1.8); 
       z-index: 500; 
-      filter: brightness(1.15) drop-shadow(0 0 8px rgba(255,255,255,0.3));
-      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+      filter: brightness(1.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
 
     /* --- Tooltip 动画修复 --- */
@@ -197,59 +160,43 @@
       left: 50%;
       opacity: 0;
       visibility: hidden;
-      transform: translateX(-50%) translateY(8px) scale(0.95);
-      background: rgba(15, 23, 42, 0.98); 
-      -webkit-backdrop-filter: blur(8px); 
-      backdrop-filter: blur(8px);
-      color: #f1f5f9;
-      padding: 12px 16px; 
+      transform: translateX(-50%) translateY(8px) scale(0.9);
+      background: rgba(15, 23, 42, 0.95); 
+      -webkit-backdrop-filter: blur(6px); 
+      backdrop-filter: blur(6px);
+      color: #fff;
+      padding: 10px 14px; 
       border-radius: 8px; 
       font-size: 11px; 
-      line-height: 1.6;
+      line-height: 1.5;
       white-space: pre-wrap;
-      word-wrap: break-word;
       z-index: 2000; 
       pointer-events: none; 
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
       width: max-content; 
-      max-width: 280px;
+      max-width: 220px;
       transition: 
-        opacity 0.3s var(--ease-out-expo),
+        opacity 0.25s var(--ease-out-expo),
         transform 0.3s var(--ease-out-expo),
-        visibility 0.3s,
-        box-shadow 0.3s ease;
-      border: 1px solid rgba(148, 163, 184, 0.2);
+        visibility 0.25s;
     }
 
     [data-tip]:hover::after {
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0) scale(1);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
     }
 
     @media (max-width: 768px) {
-      .mood-dashboard-embed-context { 
-        padding: 35px 25px 35px 60px; 
-      }
+      .mood-dashboard-embed-context { padding: 30px 20px; }
       :root {
         --cell-h: 8px;
         --scatter-h: 280px;
         --dot-size: 12px;
       }
-      .matrix-wrapper { 
-        margin-bottom: 50px;
-        column-gap: 12px;
-        row-gap: 10px;
-      }
-      .title-y { left: -70px; font-size: 10px; }
-      .title-x { bottom: -42px; font-size: 10px; }
-      .cell:hover {
-        transform: scale(1.4);
-      }
-      .dot:hover {
-        transform: translate(-50%, -50%) scale(1.6);
-      }
+      .matrix-wrapper { margin-bottom: 25px; }
+      .title-y { left: -75px; font-size: 9px; }
+      .title-x { bottom: -40px; font-size: 9px; }
     }
   </style>
 
