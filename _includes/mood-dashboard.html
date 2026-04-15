@@ -136,8 +136,8 @@
     .title-x { bottom: -40px; left: 50%; transform: translateX(-50%); }
     
     .axis-tick { position: absolute; font-size: 10px; color: #94a3b8; font-family: monospace; }
-    .tick-y1 { bottom: 5%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
-    .tick-x1 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
+    .tick-y0 { bottom: 95%; left: -25px; } .tick-y5 { top: 5%; left: -25px; }
+    .tick-x0 { bottom: -25px; left: 5%; } .tick-x5 { bottom: -25px; right: 5%; }
 
     .dot {
       width: var(--dot-size); height: var(--dot-size); 
@@ -221,7 +221,7 @@
         {% if entry %}
           {% assign m_f = entry.m | plus: 0.0 %}
           {% assign a_f = entry.a | plus: 0.0 %}
-          {% assign hue = a_f | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+          {% assign hue = a_f | times: 9 | plus: 155.0 %}
           {% assign l_p1 = m_f | times: 11.0 %}
           {% assign l_p2 = a_f | times: 7.0 %}
           {% assign lit = l_p1 | minus: l_p2 | plus: 30.0 %}
@@ -238,18 +238,18 @@
   <div class="scatter-plots">
     <div class="axis-title title-y">Positive Mood</div>
     <div class="axis-title title-x">Alcohol Consumption</div>
-    <div class="axis-tick tick-y1">1.0</div><div class="axis-tick tick-y5">5.0</div>
-    <div class="axis-tick tick-x1">1.0</div><div class="axis-tick tick-x5">5.0</div>
+    <div class="axis-tick tick-y0">0.0</div><div class="axis-tick tick-y5">5.0</div>
+    <div class="axis-tick tick-x0">0.0</div><div class="axis-tick tick-x5">5.0</div>
 
     <div class="scatter-canvas">
       {% for item in site.data.moods %}
         {% assign m_val = item.m | plus: 0.0 %}
         {% assign a_val = item.a | plus: 0.0 %}
-        {% assign x = a_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
-        {% assign y_raw = m_val | minus: 1.0 | divided_by: 4.0 | times: 90.0 | plus: 5.0 %}
+        {% assign x = a_val | divided_by: 5.0 | times: 90.0 | plus: 5.0 %}
+        {% assign y_raw = m_val | divided_by: 5.0 | times: 90.0 | plus: 5.0 %}
         {% assign y = 100.0 | minus: y_raw %}
 
-        {% assign h_dot = a_val | minus: 1.0 | times: 11.25 | plus: 155.0 %}
+        {% assign h_dot = a_val | times: 9 | plus: 155.0 %}
         {% assign l_d1 = m_val | times: 11.0 %}
         {% assign l_d2 = a_val | times: 7.0 %}
         {% assign l_dot = l_d1 | minus: l_d2 | plus: 30.0 %}
