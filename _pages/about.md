@@ -50,7 +50,7 @@ redirect_from:
 
 * Dummy-Robot: Super compact smart robotic-arm  
 <div align="center">
-    <img src="../images/project_images/(6).png"
+    <img src="../images/project_images/test1 Project (4).png"
   
          style="width: 95%; 
                 border-radius: 5px; 
