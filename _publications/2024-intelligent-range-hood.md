@@ -20,3 +20,20 @@ This paper presents the design and implementation of an intelligent range hood c
 * Implemented adaptive fan-speed regulation using PWM control
 * Integrated environmental monitoring and gas detection modules
 * Improved kitchen air-quality monitoring and energy efficiency
+
+
+
+```
+@article{yu2024rangehood,
+  author    = {Liu-Yi Yu and Yan-Zuo Chang and Lin-Po Shang and Ze-Feng Ling and Yi Chen and Yan-Hai Li and Jian-Bin Cai and Young-Shan Ou},
+  title     = {A Design of Intelligent Range Hood Based on Arduino},
+  journal   = {International Journal of Advanced Engineering Research and Science},
+  volume    = {11},
+  number    = {12},
+  pages     = {},
+  year      = {2024},
+  doi       = {10.22161/ijaers.1112.11},
+  keywords  = {Arduino, Embedded Systems, Intelligent Control, IoT}
+}
+
+```

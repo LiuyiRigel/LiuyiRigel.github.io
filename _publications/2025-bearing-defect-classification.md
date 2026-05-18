@@ -20,3 +20,20 @@ This paper proposes a bearing surface defect classification method based on acou
 * Applied YOLO-V11 to industrial defect recognition tasks
 * Improved defect classification robustness under non-stationary conditions
 * Demonstrated feasibility for intelligent equipment health monitoring
+
+
+
+```
+@article{guo2025bearing,
+  author    = {Xin-Yu Guo and Liu-Yi Yu and Yi Chen and Yan-Zuo Chang},
+  title     = {A Classification Method for Bearing Surface Defects Based on Acoustic Emission Technology and the YOLO-V11 Algorithm},
+  journal   = {International Journal of Advanced Engineering Research and Science},
+  volume    = {12},
+  number    = {12},
+  pages     = {48--53},
+  year      = {2025},
+  doi       = {10.22161/ijaers.1212.4},
+  keywords  = {Bearing Defect, Acoustic Emission, YOLO-V11, Fault Diagnosis}
+}
+
+```
