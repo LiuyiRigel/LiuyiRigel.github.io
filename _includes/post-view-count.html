@@ -1,0 +1,30 @@
+{% comment %}
+  Post view counter (Busuanzi / 不蒜子) — https://busuanzi.ibruce.info
+  - Only rendered on post pages (see _layouts/single.html), at the bottom-left of the post footer.
+  - Label override: page.view_count_label / site.view_count_label (default: "阅读量").
+  - The counter script is loaded here on purpose so that non-post pages stay untouched.
+{% endcomment %}
+{% assign view_count_label = page.view_count_label | default: site.view_count_label | default: "阅读量" %}
+
+<div class="page__view-count" id="page__view-count">
+  <i class="fa fa-fw fa-eye" aria-hidden="true"></i>
+  <span>{{ view_count_label }}</span>
+  <span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">--</span></span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+  // Keep the layout clean: hide the counter if Busuanzi is unreachable (offline / blocked),
+  // and make sure the value is visible again once it has been filled in.
+  setTimeout(function () {
+    var wrap = document.getElementById('page__view-count');
+    var value = document.getElementById('busuanzi_value_page_pv');
+    var container = document.getElementById('busuanzi_container_page_pv');
+    if (!wrap) return;
+    if (value && /\d/.test(value.textContent)) {
+      if (container) container.style.display = '';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }, 4000);
+</script>

@@ -81,6 +81,7 @@ layout: default
           <h4 class="page__meta-title">{{ site.data.ui-text[site.locale].meta_label }}</h4>
         {% endif %}
         {% include page__taxonomy.html %}
+        {% if page.collection == 'posts' %}{% include post-view-count.html %}{% endif %}
       </footer>
 
       {% if page.share %}{% include social-share.html %}{% endif %}
